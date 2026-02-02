@@ -113,7 +113,7 @@
         "Side panel opens for detailed editing",
         "Columns: Summary, Severity, Type, Status, Assigned To, Next Steps"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "project-plan-section",

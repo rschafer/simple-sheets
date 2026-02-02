@@ -6,6 +6,7 @@ import DeliveryDate from "@/components/DeliveryDate";
 import ExecutiveSummary from "@/components/ExecutiveSummary";
 import Scope from "@/components/Scope";
 import Milestones from "@/components/Milestones";
+import RaidLog from "@/components/RaidLog";
 
 export default function Home() {
   return (
@@ -54,8 +55,7 @@ export default function Home() {
 
           {/* RAID Log */}
           <section className="rounded-lg border bg-white p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-gray-500">RAID Log</h2>
-            <p className="mt-2 text-gray-400 italic">Coming soon</p>
+            <RaidLog />
           </section>
 
           {/* Project Plan */}
