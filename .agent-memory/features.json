@@ -89,7 +89,7 @@
         "User can inline-edit the scope text",
         "Changes persist"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "milestones-section",
