@@ -147,7 +147,7 @@
         "User can select frequency (Real-time/Daily/Weekly)",
         "Health status change triggers notification"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "data-persistence",

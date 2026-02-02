@@ -9,6 +9,7 @@ import Milestones from "@/components/Milestones";
 import RaidLog from "@/components/RaidLog";
 import ProjectPlan from "@/components/ProjectPlan";
 import ShareDialog from "@/components/ShareDialog";
+import Notifications from "@/components/Notifications";
 
 export default function Home() {
   return (
@@ -66,6 +67,7 @@ export default function Home() {
           </section>
         </div>
       </main>
+      <Notifications />
       <ShareDialog />
     </div>
   );
