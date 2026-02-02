@@ -124,7 +124,7 @@
         "Click/expand reveals the project plan",
         "Spreadsheet-like editing interface works"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "sharing-access-control",
