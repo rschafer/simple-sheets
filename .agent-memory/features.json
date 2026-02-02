@@ -78,7 +78,7 @@
         "Historical summaries are viewable",
         "User can create a new weekly entry"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "scope-section",
