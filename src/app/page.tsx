@@ -8,6 +8,7 @@ import Scope from "@/components/Scope";
 import Milestones from "@/components/Milestones";
 import RaidLog from "@/components/RaidLog";
 import ProjectPlan from "@/components/ProjectPlan";
+import ShareDialog from "@/components/ShareDialog";
 
 export default function Home() {
   return (
@@ -65,6 +66,7 @@ export default function Home() {
           </section>
         </div>
       </main>
+      <ShareDialog />
     </div>
   );
 }

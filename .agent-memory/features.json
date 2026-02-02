@@ -135,7 +135,7 @@
         "Access levels (Owner/Editor/Viewer/Commenter) are selectable",
         "Permissions are enforced (viewers cannot edit)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "notifications",
