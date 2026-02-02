@@ -55,7 +55,7 @@
         "Phase dropdown shows customizable phases",
         "Changes persist"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "delivery-date-section",
