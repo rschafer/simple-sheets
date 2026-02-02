@@ -1,6 +1,8 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from "react";
+
+const STORAGE_KEY = "dashboard-data";
 
 export interface KeyLink {
   id: string;
@@ -125,8 +127,50 @@ const defaultData: DashboardData = {
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
 
+function loadFromStorage(): DashboardData {
+  if (typeof window === "undefined") return defaultData;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return { ...defaultData, ...JSON.parse(stored) };
+    }
+  } catch {
+    // ignore parse errors
+  }
+  return defaultData;
+}
+
+function saveToStorage(data: DashboardData) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    // ignore quota errors
+  }
+}
+
 export function DashboardProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<DashboardData>(defaultData);
+  const [loaded, setLoaded] = useState(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    setData(loadFromStorage());
+    setLoaded(true);
+  }, []);
+
+  // Auto-save on every change (debounced 300ms)
+  useEffect(() => {
+    if (!loaded) return;
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      saveToStorage(data);
+    }, 300);
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+    };
+  }, [data, loaded]);
 
   const updateData = useCallback((partial: Partial<DashboardData>) => {
     setData((prev) => ({ ...prev, ...partial }));
