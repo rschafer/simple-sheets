@@ -1,3 +1,164 @@
 {
-  "features": []
+  "features": [
+    {
+      "id": "project-setup-scaffold",
+      "description": "Initialize Next.js (or chosen framework) project with TypeScript, Tailwind CSS, and basic app structure",
+      "priority": 1,
+      "verification": [
+        "npm run dev starts without errors",
+        "Homepage renders a placeholder dashboard layout",
+        "TypeScript compiles without errors"
+      ],
+      "passes": false
+    },
+    {
+      "id": "project-name-section",
+      "description": "User can view and inline-edit the project name at the top of the dashboard",
+      "priority": 2,
+      "verification": [
+        "Project name displays prominently",
+        "Clicking the name makes it editable",
+        "Changes persist after blur/save"
+      ],
+      "passes": false
+    },
+    {
+      "id": "key-links-section",
+      "description": "User can view, add, edit, and remove key links with labels and URLs",
+      "priority": 3,
+      "verification": [
+        "Links display as a list with labels",
+        "User can add a new link with label and URL",
+        "User can inline-edit existing links",
+        "User can remove a link"
+      ],
+      "passes": false
+    },
+    {
+      "id": "primary-contacts-section",
+      "description": "User can view and inline-edit role-based contacts (Program, Product, Engineering, etc.)",
+      "priority": 4,
+      "verification": [
+        "Contacts display with role labels",
+        "User can inline-edit contact names",
+        "User can add/remove contacts"
+      ],
+      "passes": false
+    },
+    {
+      "id": "program-status-section",
+      "description": "User can set health indicator (Red/Yellow/Green) and project phase (Discovery/Planning/Execution)",
+      "priority": 5,
+      "verification": [
+        "Health indicator displays with color coding",
+        "User can manually toggle health status",
+        "Phase dropdown shows customizable phases",
+        "Changes persist"
+      ],
+      "passes": false
+    },
+    {
+      "id": "delivery-date-section",
+      "description": "User can view and edit the target delivery/GA date",
+      "priority": 6,
+      "verification": [
+        "Delivery date displays prominently",
+        "User can pick/edit the date",
+        "Date persists after save"
+      ],
+      "passes": false
+    },
+    {
+      "id": "executive-summary-section",
+      "description": "User can write weekly executive summaries with template sections (Progress, Next Steps, Risks) and view history",
+      "priority": 7,
+      "verification": [
+        "Rich text editor for summary entry",
+        "Template sections pre-populate",
+        "Historical summaries are viewable",
+        "User can create a new weekly entry"
+      ],
+      "passes": false
+    },
+    {
+      "id": "scope-section",
+      "description": "User can view and inline-edit scope text for a given time period",
+      "priority": 8,
+      "verification": [
+        "Scope text area displays with period label",
+        "User can inline-edit the scope text",
+        "Changes persist"
+      ],
+      "passes": false
+    },
+    {
+      "id": "milestones-section",
+      "description": "User can view, add, edit milestones in a table with name, status, start/finish dates",
+      "priority": 9,
+      "verification": [
+        "Milestones display in a table format",
+        "User can add a new milestone row",
+        "User can inline-edit name, status, dates",
+        "Status options: Complete, In Progress, Not Started"
+      ],
+      "passes": false
+    },
+    {
+      "id": "raid-section",
+      "description": "User can manage RAID items (Risks, Actions, Issues, Dependencies) with collapsible view and side panel",
+      "priority": 10,
+      "verification": [
+        "RAID items display in a filterable/sortable table",
+        "Collapsible section works",
+        "Side panel opens for detailed editing",
+        "Columns: Summary, Severity, Type, Status, Assigned To, Next Steps"
+      ],
+      "passes": false
+    },
+    {
+      "id": "project-plan-section",
+      "description": "User can access an expandable project plan (Google Sheets-like) from the dashboard",
+      "priority": 11,
+      "verification": [
+        "Project plan is NOT shown on main dashboard by default",
+        "Click/expand reveals the project plan",
+        "Spreadsheet-like editing interface works"
+      ],
+      "passes": false
+    },
+    {
+      "id": "sharing-access-control",
+      "description": "User can share the dashboard with others at different access levels (Owner, Editor, Viewer, Commenter)",
+      "priority": 12,
+      "verification": [
+        "Share dialog allows adding users",
+        "Access levels (Owner/Editor/Viewer/Commenter) are selectable",
+        "Permissions are enforced (viewers cannot edit)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "notifications",
+      "description": "User can subscribe to notifications (health status changes) via Outlook/Slack with frequency options",
+      "priority": 13,
+      "verification": [
+        "Notification subscription UI exists",
+        "User can select channel (Outlook/Slack)",
+        "User can select frequency (Real-time/Daily/Weekly)",
+        "Health status change triggers notification"
+      ],
+      "passes": false
+    },
+    {
+      "id": "data-persistence",
+      "description": "All dashboard data persists via API/backend with auto-save",
+      "priority": 14,
+      "verification": [
+        "All sections auto-save on edit",
+        "Page reload preserves all data",
+        "API endpoints exist for all CRUD operations"
+      ],
+      "passes": false
+    }
+  ]
 }
