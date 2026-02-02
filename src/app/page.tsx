@@ -1,5 +1,6 @@
 import ProjectName from "@/components/ProjectName";
 import KeyLinks from "@/components/KeyLinks";
+import PrimaryContacts from "@/components/PrimaryContacts";
 
 export default function Home() {
   return (
@@ -17,8 +18,7 @@ export default function Home() {
               <KeyLinks />
             </section>
             <section className="rounded-lg border bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-500">Primary Contacts</h2>
-              <p className="mt-2 text-gray-400 italic">Coming soon</p>
+              <PrimaryContacts />
             </section>
           </div>
 

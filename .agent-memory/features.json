@@ -43,7 +43,7 @@
         "User can inline-edit contact names",
         "User can add/remove contacts"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "program-status-section",
