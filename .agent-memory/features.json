@@ -32,7 +32,7 @@
         "User can inline-edit existing links",
         "User can remove a link"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "primary-contacts-section",
