@@ -12,3 +12,5 @@ Examples:
 DO NOT add established knowledge here - that goes in rules/*.md
 -->
 
+- Copying node_modules from another directory breaks .bin symlinks. Must rm -rf node_modules && npm install after copying a scaffolded project.
+- Next.js 16.1.6 uses Turbopack by default for builds.

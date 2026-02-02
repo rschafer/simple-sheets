@@ -9,7 +9,7 @@
         "Homepage renders a placeholder dashboard layout",
         "TypeScript compiles without errors"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "project-name-section",
@@ -20,7 +20,7 @@
         "Clicking the name makes it editable",
         "Changes persist after blur/save"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "key-links-section",
