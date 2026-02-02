@@ -101,7 +101,7 @@
         "User can inline-edit name, status, dates",
         "Status options: Complete, In Progress, Not Started"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "raid-section",
