@@ -143,11 +143,12 @@ export default function RaidLog() {
                   {sorted.map((item) => (
                     <tr key={item.id} className="border-b hover:bg-gray-50 group">
                       <td className="py-2 pr-3">
-                        <input
+                        <textarea
                           value={item.summary}
                           onChange={(e) => updateItem(item.id, { summary: e.target.value })}
                           placeholder="Enter summary..."
-                          className="w-full border border-gray-200 rounded px-2 py-1 text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 outline-none"
+                          rows={2}
+                          className="w-full border border-gray-200 rounded px-2 py-1 text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 outline-none resize-y min-h-[2.5rem]"
                         />
                       </td>
                       <td className="py-2 pr-3">

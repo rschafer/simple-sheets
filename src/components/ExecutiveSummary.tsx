@@ -15,28 +15,48 @@ function formatDate(iso: string) {
   });
 }
 
-const TEMPLATE = {
-  recentProgress: "- ",
-  nextSteps: "- ",
-  risksAndMitigation: "- ",
+const TEMPLATES = {
+  blank: {
+    name: "Blank",
+    recentProgress: "",
+    nextSteps: "",
+    risksAndMitigation: "",
+    impactToOtherPrograms: "",
+  },
+  wallace: {
+    name: "Wallace",
+    recentProgress: "- ",
+    nextSteps: "- ",
+    risksAndMitigation: "- ",
+    impactToOtherPrograms: "- ",
+  },
 };
 
 export default function ExecutiveSummary() {
   const { data, updateData } = useDashboard();
   const [editing, setEditing] = useState(false);
   const [viewingHistoryId, setViewingHistoryId] = useState<string | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<keyof typeof TEMPLATES>("wallace");
   const [draft, setDraft] = useState<Omit<ESType, "id" | "date">>({
-    recentProgress: TEMPLATE.recentProgress,
-    nextSteps: TEMPLATE.nextSteps,
-    risksAndMitigation: TEMPLATE.risksAndMitigation,
+    recentProgress: TEMPLATES.wallace.recentProgress,
+    nextSteps: TEMPLATES.wallace.nextSteps,
+    risksAndMitigation: TEMPLATES.wallace.risksAndMitigation,
+    impactToOtherPrograms: TEMPLATES.wallace.impactToOtherPrograms,
   });
 
-  const startNewEntry = () => {
+  const applyTemplate = (templateKey: keyof typeof TEMPLATES) => {
+    const template = TEMPLATES[templateKey];
+    setSelectedTemplate(templateKey);
     setDraft({
-      recentProgress: TEMPLATE.recentProgress,
-      nextSteps: TEMPLATE.nextSteps,
-      risksAndMitigation: TEMPLATE.risksAndMitigation,
+      recentProgress: template.recentProgress,
+      nextSteps: template.nextSteps,
+      risksAndMitigation: template.risksAndMitigation,
+      impactToOtherPrograms: template.impactToOtherPrograms,
     });
+  };
+
+  const startNewEntry = () => {
+    applyTemplate(selectedTemplate);
     setEditing(true);
     setViewingHistoryId(null);
   };
@@ -87,6 +107,18 @@ export default function ExecutiveSummary() {
 
       {editing ? (
         <div className="space-y-4">
+          <div className="flex items-center gap-2 pb-2 border-b">
+            <label className="text-sm text-gray-500">Template:</label>
+            <select
+              value={selectedTemplate}
+              onChange={(e) => applyTemplate(e.target.value as keyof typeof TEMPLATES)}
+              className="rounded border border-gray-300 px-2 py-1 text-sm text-gray-600"
+            >
+              {Object.entries(TEMPLATES).map(([key, template]) => (
+                <option key={key} value={key}>{template.name}</option>
+              ))}
+            </select>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">Recent Progress</label>
             <textarea
@@ -111,6 +143,15 @@ export default function ExecutiveSummary() {
             <textarea
               value={draft.risksAndMitigation}
               onChange={(e) => setDraft({ ...draft, risksAndMitigation: e.target.value })}
+              rows={4}
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-blue-400 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">Impact to Other Programs</label>
+            <textarea
+              value={draft.impactToOtherPrograms}
+              onChange={(e) => setDraft({ ...draft, impactToOtherPrograms: e.target.value })}
               rows={4}
               className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-blue-400 focus:outline-none"
             />
@@ -145,6 +186,12 @@ export default function ExecutiveSummary() {
             <h3 className="text-sm font-semibold text-gray-600 mb-1">Risks and Mitigation Plan</h3>
             <p className="text-sm text-gray-700 whitespace-pre-wrap">{displaySummary.risksAndMitigation}</p>
           </div>
+          {displaySummary.impactToOtherPrograms && (
+            <div>
+              <h3 className="text-sm font-semibold text-gray-600 mb-1">Impact to Other Programs</h3>
+              <p className="text-sm text-gray-700 whitespace-pre-wrap">{displaySummary.impactToOtherPrograms}</p>
+            </div>
+          )}
         </div>
       ) : (
         <p className="text-gray-400 text-sm italic">

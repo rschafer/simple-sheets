@@ -77,13 +77,14 @@ export default function Milestones() {
                   className={`border-b hover:bg-gray-50 group ${isOverdue(m) ? "bg-red-50" : ""}`}
                 >
                   <td className="py-2 pr-4">
-                    <input
+                    <textarea
                       value={m.name}
                       onChange={(e) => updateMilestone(m.id, { name: e.target.value })}
                       onFocus={() => setEditingId(m.id)}
                       onBlur={() => setEditingId(null)}
                       placeholder="Enter milestone name..."
-                      className="w-full border border-gray-200 rounded px-2 py-1 text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 outline-none"
+                      rows={2}
+                      className="w-full border border-gray-200 rounded px-2 py-1 text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 outline-none resize-y min-h-[2.5rem]"
                     />
                   </td>
                   <td className="py-2 pr-4">

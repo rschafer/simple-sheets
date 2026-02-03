@@ -25,6 +25,7 @@ export interface ExecutiveSummary {
   recentProgress: string;
   nextSteps: string;
   risksAndMitigation: string;
+  impactToOtherPrograms: string;
 }
 
 export type MilestoneStatus = "Complete" | "In Progress" | "Not Started";
