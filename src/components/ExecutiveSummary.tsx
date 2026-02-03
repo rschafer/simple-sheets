@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useDashboard, ExecutiveSummary as ESType } from "@/context/DashboardContext";
+import { useDashboard, ExecutiveSummary as ESType, ProjectPlanRow, RaidItem } from "@/context/DashboardContext";
 
 function generateId() {
   return Math.random().toString(36).substring(2, 9);
@@ -43,6 +43,10 @@ export default function ExecutiveSummary() {
     risksAndMitigation: TEMPLATES.wallace.risksAndMitigation,
     impactToOtherPrograms: TEMPLATES.wallace.impactToOtherPrograms,
   });
+  const [showAiModal, setShowAiModal] = useState(false);
+  const [aiStartDate, setAiStartDate] = useState("");
+  const [aiEndDate, setAiEndDate] = useState("");
+  const [generating, setGenerating] = useState(false);
 
   const applyTemplate = (templateKey: keyof typeof TEMPLATES) => {
     const template = TEMPLATES[templateKey];
@@ -59,6 +63,87 @@ export default function ExecutiveSummary() {
     applyTemplate(selectedTemplate);
     setEditing(true);
     setViewingHistoryId(null);
+  };
+
+  // Filter project plan items by date range
+  const getItemsInDateRange = (startDate: string, endDate: string) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const planItems = data.projectPlan.filter((item: ProjectPlanRow) => {
+      if (!item.startDate && !item.endDate) return false;
+      const itemStart = item.startDate ? new Date(item.startDate) : null;
+      const itemEnd = item.endDate ? new Date(item.endDate) : null;
+
+      // Include if item overlaps with date range
+      if (itemStart && itemEnd) {
+        return itemStart <= end && itemEnd >= start;
+      }
+      if (itemStart) return itemStart >= start && itemStart <= end;
+      if (itemEnd) return itemEnd >= start && itemEnd <= end;
+      return false;
+    });
+
+    const raidItems = data.raidItems.filter((item: RaidItem) => {
+      // Include open RAID items
+      return item.status !== "Closed";
+    });
+
+    return { planItems, raidItems };
+  };
+
+  // Generate summary from project plan data
+  const generateAiSummary = () => {
+    if (!aiStartDate || !aiEndDate) return;
+
+    setGenerating(true);
+
+    const { planItems, raidItems } = getItemsInDateRange(aiStartDate, aiEndDate);
+
+    // Build Recent Progress from completed or in-progress items
+    const completedItems = planItems.filter((p: ProjectPlanRow) => p.status === "Complete");
+    const inProgressItems = planItems.filter((p: ProjectPlanRow) => p.status === "In Progress");
+
+    let recentProgress = "";
+    if (completedItems.length > 0) {
+      recentProgress += completedItems.map((p: ProjectPlanRow) => `- Completed: ${p.task}`).join("\n");
+    }
+    if (inProgressItems.length > 0) {
+      if (recentProgress) recentProgress += "\n";
+      recentProgress += inProgressItems.map((p: ProjectPlanRow) => `- In progress: ${p.task}`).join("\n");
+    }
+    if (!recentProgress) recentProgress = "- No completed tasks in this period";
+
+    // Build Next Steps from upcoming items
+    const upcomingItems = planItems.filter((p: ProjectPlanRow) =>
+      p.status === "Not Started" || p.status === "In Progress"
+    );
+    let nextSteps = upcomingItems.length > 0
+      ? upcomingItems.slice(0, 5).map((p: ProjectPlanRow) => `- ${p.task}`).join("\n")
+      : "- No upcoming tasks scheduled";
+
+    // Build Risks from RAID items
+    const risks = raidItems.filter((r: RaidItem) => r.type === "Risk" || r.type === "Issue");
+    let risksAndMitigation = risks.length > 0
+      ? risks.map((r: RaidItem) => `- [${r.severity}] ${r.summary}${r.nextSteps ? ` - ${r.nextSteps}` : ""}`).join("\n")
+      : "- No open risks or issues";
+
+    // Build Impact from dependencies
+    const dependencies = raidItems.filter((r: RaidItem) => r.type === "Dependency");
+    let impactToOtherPrograms = dependencies.length > 0
+      ? dependencies.map((r: RaidItem) => `- ${r.summary}`).join("\n")
+      : "- No dependencies identified";
+
+    setDraft({
+      recentProgress,
+      nextSteps,
+      risksAndMitigation,
+      impactToOtherPrograms,
+    });
+
+    setGenerating(false);
+    setShowAiModal(false);
+    setEditing(true);
   };
 
   const saveEntry = () => {
@@ -97,6 +182,12 @@ export default function ExecutiveSummary() {
             </select>
           )}
           <button
+            onClick={() => setShowAiModal(true)}
+            className="text-sm text-purple-600 hover:text-purple-800 font-medium"
+          >
+            Generate with AI
+          </button>
+          <button
             onClick={startNewEntry}
             className="text-sm text-blue-600 hover:text-blue-800 font-medium"
           >
@@ -104,6 +195,54 @@ export default function ExecutiveSummary() {
           </button>
         </div>
       </div>
+
+      {/* AI Generation Modal */}
+      {showAiModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/30" onClick={() => setShowAiModal(false)} />
+          <div className="relative bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Generate Summary with AI</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Select a date range to generate a summary based on your project plan and RAID log.
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Start Date</label>
+                <input
+                  type="date"
+                  value={aiStartDate}
+                  onChange={(e) => setAiStartDate(e.target.value)}
+                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">End Date</label>
+                <input
+                  type="date"
+                  value={aiEndDate}
+                  onChange={(e) => setAiEndDate(e.target.value)}
+                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                />
+              </div>
+              <div className="flex gap-2 pt-2">
+                <button
+                  onClick={generateAiSummary}
+                  disabled={!aiStartDate || !aiEndDate || generating}
+                  className="flex-1 rounded bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                >
+                  {generating ? "Generating..." : "Generate"}
+                </button>
+                <button
+                  onClick={() => setShowAiModal(false)}
+                  className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {editing ? (
         <div className="space-y-4">
