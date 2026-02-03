@@ -15,6 +15,34 @@ function formatDate(iso: string) {
   });
 }
 
+const MAX_SENTENCES = 3;
+
+// Count sentences (split by . ! ?)
+function countSentences(text: string): number {
+  if (!text.trim()) return 0;
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+  return sentences.length;
+}
+
+// Check if text exceeds sentence limit
+function exceedsLimit(text: string): boolean {
+  return countSentences(text) > MAX_SENTENCES;
+}
+
+// Simple AI summarizer - condenses text to 3 sentences
+function summarizeText(text: string): string {
+  if (!text.trim()) return text;
+
+  // Split into sentences
+  const sentences = text.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 0);
+
+  if (sentences.length <= MAX_SENTENCES) return text;
+
+  // Take first 3 sentences (simple approach)
+  // In a real app, this would call an AI API
+  return sentences.slice(0, MAX_SENTENCES).join(" ");
+}
+
 const TEMPLATES = {
   blank: {
     name: "Blank",
@@ -284,56 +312,128 @@ export default function ExecutiveSummary() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              {TEMPLATES[selectedTemplate].labels.recentProgress}
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium text-gray-600">
+                {TEMPLATES[selectedTemplate].labels.recentProgress}
+              </label>
+              <div className="flex items-center gap-2">
+                <span className={`text-xs ${exceedsLimit(draft.recentProgress) ? "text-red-500 font-medium" : "text-gray-400"}`}>
+                  {countSentences(draft.recentProgress)}/{MAX_SENTENCES} sentences
+                </span>
+                {exceedsLimit(draft.recentProgress) && (
+                  <button
+                    onClick={() => setDraft({ ...draft, recentProgress: summarizeText(draft.recentProgress) })}
+                    className="text-xs text-purple-600 hover:text-purple-800 font-medium"
+                  >
+                    Summarize with AI
+                  </button>
+                )}
+              </div>
+            </div>
             <textarea
               autoFocus
               value={draft.recentProgress}
               onChange={(e) => setDraft({ ...draft, recentProgress: e.target.value })}
               rows={4}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-blue-400 focus:outline-none"
+              className={`w-full rounded border px-3 py-2 text-sm text-gray-700 focus:outline-none ${exceedsLimit(draft.recentProgress) ? "border-red-300 focus:border-red-400" : "border-gray-300 focus:border-blue-400"}`}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              {TEMPLATES[selectedTemplate].labels.nextSteps}
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium text-gray-600">
+                {TEMPLATES[selectedTemplate].labels.nextSteps}
+              </label>
+              <div className="flex items-center gap-2">
+                <span className={`text-xs ${exceedsLimit(draft.nextSteps) ? "text-red-500 font-medium" : "text-gray-400"}`}>
+                  {countSentences(draft.nextSteps)}/{MAX_SENTENCES} sentences
+                </span>
+                {exceedsLimit(draft.nextSteps) && (
+                  <button
+                    onClick={() => setDraft({ ...draft, nextSteps: summarizeText(draft.nextSteps) })}
+                    className="text-xs text-purple-600 hover:text-purple-800 font-medium"
+                  >
+                    Summarize with AI
+                  </button>
+                )}
+              </div>
+            </div>
             <textarea
               value={draft.nextSteps}
               onChange={(e) => setDraft({ ...draft, nextSteps: e.target.value })}
               rows={4}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-blue-400 focus:outline-none"
+              className={`w-full rounded border px-3 py-2 text-sm text-gray-700 focus:outline-none ${exceedsLimit(draft.nextSteps) ? "border-red-300 focus:border-red-400" : "border-gray-300 focus:border-blue-400"}`}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              {TEMPLATES[selectedTemplate].labels.risksAndMitigation}
-            </label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-sm font-medium text-gray-600">
+                {TEMPLATES[selectedTemplate].labels.risksAndMitigation}
+              </label>
+              <div className="flex items-center gap-2">
+                <span className={`text-xs ${exceedsLimit(draft.risksAndMitigation) ? "text-red-500 font-medium" : "text-gray-400"}`}>
+                  {countSentences(draft.risksAndMitigation)}/{MAX_SENTENCES} sentences
+                </span>
+                {exceedsLimit(draft.risksAndMitigation) && (
+                  <button
+                    onClick={() => setDraft({ ...draft, risksAndMitigation: summarizeText(draft.risksAndMitigation) })}
+                    className="text-xs text-purple-600 hover:text-purple-800 font-medium"
+                  >
+                    Summarize with AI
+                  </button>
+                )}
+              </div>
+            </div>
             <textarea
               value={draft.risksAndMitigation}
               onChange={(e) => setDraft({ ...draft, risksAndMitigation: e.target.value })}
               rows={4}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-blue-400 focus:outline-none"
+              className={`w-full rounded border px-3 py-2 text-sm text-gray-700 focus:outline-none ${exceedsLimit(draft.risksAndMitigation) ? "border-red-300 focus:border-red-400" : "border-gray-300 focus:border-blue-400"}`}
             />
           </div>
           {TEMPLATES[selectedTemplate].labels.impactToOtherPrograms && (
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
-                {TEMPLATES[selectedTemplate].labels.impactToOtherPrograms}
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-sm font-medium text-gray-600">
+                  {TEMPLATES[selectedTemplate].labels.impactToOtherPrograms}
+                </label>
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs ${exceedsLimit(draft.impactToOtherPrograms) ? "text-red-500 font-medium" : "text-gray-400"}`}>
+                    {countSentences(draft.impactToOtherPrograms)}/{MAX_SENTENCES} sentences
+                  </span>
+                  {exceedsLimit(draft.impactToOtherPrograms) && (
+                    <button
+                      onClick={() => setDraft({ ...draft, impactToOtherPrograms: summarizeText(draft.impactToOtherPrograms) })}
+                      className="text-xs text-purple-600 hover:text-purple-800 font-medium"
+                    >
+                      Summarize with AI
+                    </button>
+                  )}
+                </div>
+              </div>
               <textarea
                 value={draft.impactToOtherPrograms}
                 onChange={(e) => setDraft({ ...draft, impactToOtherPrograms: e.target.value })}
                 rows={4}
-                className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-blue-400 focus:outline-none"
+                className={`w-full rounded border px-3 py-2 text-sm text-gray-700 focus:outline-none ${exceedsLimit(draft.impactToOtherPrograms) ? "border-red-300 focus:border-red-400" : "border-gray-300 focus:border-blue-400"}`}
               />
             </div>
           )}
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            {(exceedsLimit(draft.recentProgress) ||
+              exceedsLimit(draft.nextSteps) ||
+              exceedsLimit(draft.risksAndMitigation) ||
+              (TEMPLATES[selectedTemplate].labels.impactToOtherPrograms && exceedsLimit(draft.impactToOtherPrograms))) && (
+              <span className="text-xs text-red-500">Each section must be 3 sentences or less</span>
+            )}
             <button
               onClick={saveEntry}
-              className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+              disabled={
+                exceedsLimit(draft.recentProgress) ||
+                exceedsLimit(draft.nextSteps) ||
+                exceedsLimit(draft.risksAndMitigation) ||
+                Boolean(TEMPLATES[selectedTemplate].labels.impactToOtherPrograms && exceedsLimit(draft.impactToOtherPrograms))
+              }
+              className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               Save Summary
             </button>
