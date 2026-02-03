@@ -16,50 +16,44 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       <main className="mx-auto max-w-6xl px-8 py-8">
         <div className="grid gap-6">
-          {/* Project Name */}
+          {/* Header: Project Name + Status + Delivery Date + Contacts */}
           <section className="rounded-lg border bg-white p-6 shadow-sm">
-            <ProjectName />
+            <div className="flex flex-col gap-4">
+              <div className="flex items-start justify-between gap-6 flex-wrap">
+                <div className="flex-1 min-w-0">
+                  <ProjectName />
+                </div>
+                <div className="flex items-center gap-4 flex-shrink-0 flex-wrap">
+                  <ProgramStatus />
+                  <DeliveryDate />
+                </div>
+              </div>
+              <div className="border-t pt-4 grid gap-4 md:grid-cols-2">
+                <PrimaryContacts />
+                <KeyLinks />
+              </div>
+            </div>
           </section>
 
-          {/* Key Links & Contacts Row */}
+          {/* Executive Summary & Scope */}
           <div className="grid gap-6 md:grid-cols-2">
             <section className="rounded-lg border bg-white p-6 shadow-sm">
-              <KeyLinks />
+              <ExecutiveSummary />
             </section>
             <section className="rounded-lg border bg-white p-6 shadow-sm">
-              <PrimaryContacts />
+              <Scope />
             </section>
           </div>
 
-          {/* Status Row */}
+          {/* Milestones & RAID Log */}
           <div className="grid gap-6 md:grid-cols-2">
             <section className="rounded-lg border bg-white p-6 shadow-sm">
-              <ProgramStatus />
+              <Milestones />
             </section>
             <section className="rounded-lg border bg-white p-6 shadow-sm">
-              <DeliveryDate />
+              <RaidLog />
             </section>
           </div>
-
-          {/* Executive Summary */}
-          <section className="rounded-lg border bg-white p-6 shadow-sm">
-            <ExecutiveSummary />
-          </section>
-
-          {/* Scope */}
-          <section className="rounded-lg border bg-white p-6 shadow-sm">
-            <Scope />
-          </section>
-
-          {/* Milestones */}
-          <section className="rounded-lg border bg-white p-6 shadow-sm">
-            <Milestones />
-          </section>
-
-          {/* RAID Log */}
-          <section className="rounded-lg border bg-white p-6 shadow-sm">
-            <RaidLog />
-          </section>
 
           {/* Project Plan */}
           <section className="rounded-lg border bg-white p-6 shadow-sm">

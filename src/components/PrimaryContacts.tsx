@@ -44,7 +44,7 @@ export default function PrimaryContacts() {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-gray-700">Primary Contacts</h2>
+        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Contacts</h3>
         <button onClick={addContact} className="text-sm text-blue-600 hover:text-blue-800 font-medium">
           + Add Contact
         </button>

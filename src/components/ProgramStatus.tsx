@@ -19,8 +19,7 @@ export default function ProgramStatus() {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold text-gray-700 mb-3">Program Status</h2>
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-4">
         {/* Health Indicator */}
         <div className="relative">
           <button
