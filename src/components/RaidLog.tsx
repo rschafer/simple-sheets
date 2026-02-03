@@ -146,8 +146,8 @@ export default function RaidLog() {
                         <input
                           value={item.summary}
                           onChange={(e) => updateItem(item.id, { summary: e.target.value })}
-                          placeholder="Summary"
-                          className="w-full bg-transparent border-0 outline-none text-gray-900 placeholder-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-300 rounded px-1"
+                          placeholder="Enter summary..."
+                          className="w-full border border-gray-200 rounded px-2 py-1 text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 outline-none"
                         />
                       </td>
                       <td className="py-2 pr-3">
@@ -181,8 +181,8 @@ export default function RaidLog() {
                         <input
                           value={item.assignedTo}
                           onChange={(e) => updateItem(item.id, { assignedTo: e.target.value })}
-                          placeholder="Name"
-                          className="w-full bg-transparent border-0 outline-none text-gray-900 placeholder-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-300 rounded px-1"
+                          placeholder="Enter name..."
+                          className="w-full border border-gray-200 rounded px-2 py-1 text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 outline-none"
                         />
                       </td>
                       <td className="py-2 flex gap-1">

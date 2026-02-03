@@ -82,8 +82,8 @@ export default function Milestones() {
                       onChange={(e) => updateMilestone(m.id, { name: e.target.value })}
                       onFocus={() => setEditingId(m.id)}
                       onBlur={() => setEditingId(null)}
-                      placeholder="Milestone name"
-                      className="w-full bg-transparent border-0 outline-none text-gray-900 placeholder-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-300 rounded px-1"
+                      placeholder="Enter milestone name..."
+                      className="w-full border border-gray-200 rounded px-2 py-1 text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 outline-none"
                     />
                   </td>
                   <td className="py-2 pr-4">
