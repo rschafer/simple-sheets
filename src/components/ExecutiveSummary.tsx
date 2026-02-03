@@ -22,6 +22,12 @@ const TEMPLATES = {
     nextSteps: "",
     risksAndMitigation: "",
     impactToOtherPrograms: "",
+    labels: {
+      recentProgress: "Recent Progress",
+      nextSteps: "Next Steps",
+      risksAndMitigation: "Risks and Mitigation Plan",
+      impactToOtherPrograms: "Impact to Other Programs",
+    },
   },
   wallace: {
     name: "Wallace",
@@ -29,6 +35,25 @@ const TEMPLATES = {
     nextSteps: "- ",
     risksAndMitigation: "- ",
     impactToOtherPrograms: "- ",
+    labels: {
+      recentProgress: "Recent Progress",
+      nextSteps: "Next Steps",
+      risksAndMitigation: "Risks and Mitigation Plan",
+      impactToOtherPrograms: "Impact to Other Programs",
+    },
+  },
+  randall: {
+    name: "Randall",
+    recentProgress: "- ",
+    nextSteps: "- ",
+    risksAndMitigation: "- ",
+    impactToOtherPrograms: "",
+    labels: {
+      recentProgress: "What We Delivered Since Last Meeting",
+      nextSteps: "What Is In Progress",
+      risksAndMitigation: "Risks and Action Plan",
+      impactToOtherPrograms: "",
+    },
   },
 };
 
@@ -259,7 +284,9 @@ export default function ExecutiveSummary() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Recent Progress</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              {TEMPLATES[selectedTemplate].labels.recentProgress}
+            </label>
             <textarea
               autoFocus
               value={draft.recentProgress}
@@ -269,7 +296,9 @@ export default function ExecutiveSummary() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Next Steps</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              {TEMPLATES[selectedTemplate].labels.nextSteps}
+            </label>
             <textarea
               value={draft.nextSteps}
               onChange={(e) => setDraft({ ...draft, nextSteps: e.target.value })}
@@ -278,7 +307,9 @@ export default function ExecutiveSummary() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Risks and Mitigation Plan</label>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              {TEMPLATES[selectedTemplate].labels.risksAndMitigation}
+            </label>
             <textarea
               value={draft.risksAndMitigation}
               onChange={(e) => setDraft({ ...draft, risksAndMitigation: e.target.value })}
@@ -286,15 +317,19 @@ export default function ExecutiveSummary() {
               className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-blue-400 focus:outline-none"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">Impact to Other Programs</label>
-            <textarea
-              value={draft.impactToOtherPrograms}
-              onChange={(e) => setDraft({ ...draft, impactToOtherPrograms: e.target.value })}
-              rows={4}
-              className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-blue-400 focus:outline-none"
-            />
-          </div>
+          {TEMPLATES[selectedTemplate].labels.impactToOtherPrograms && (
+            <div>
+              <label className="block text-sm font-medium text-gray-600 mb-1">
+                {TEMPLATES[selectedTemplate].labels.impactToOtherPrograms}
+              </label>
+              <textarea
+                value={draft.impactToOtherPrograms}
+                onChange={(e) => setDraft({ ...draft, impactToOtherPrograms: e.target.value })}
+                rows={4}
+                className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-blue-400 focus:outline-none"
+              />
+            </div>
+          )}
           <div className="flex gap-2">
             <button
               onClick={saveEntry}
