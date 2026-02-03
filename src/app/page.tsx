@@ -16,7 +16,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
       <main className="mx-auto max-w-6xl px-8 py-8">
         <div className="grid gap-6">
-          {/* Header: Project Name + Status + Delivery Date + Contacts */}
+          {/* Header: Project Name + Status + Delivery Date + Contacts + Scope + Key Links */}
           <section className="rounded-lg border bg-white p-6 shadow-sm">
             <div className="flex flex-col gap-4">
               <div className="flex items-start justify-between gap-6 flex-wrap">
@@ -30,20 +30,18 @@ export default function Home() {
               </div>
               <div className="border-t pt-4 grid gap-4 md:grid-cols-2">
                 <PrimaryContacts />
+                <Scope />
+              </div>
+              <div className="border-t pt-4">
                 <KeyLinks />
               </div>
             </div>
           </section>
 
-          {/* Executive Summary & Scope */}
-          <div className="grid gap-6 md:grid-cols-2">
-            <section className="rounded-lg border bg-white p-6 shadow-sm">
-              <ExecutiveSummary />
-            </section>
-            <section className="rounded-lg border bg-white p-6 shadow-sm">
-              <Scope />
-            </section>
-          </div>
+          {/* Executive Summary */}
+          <section className="rounded-lg border bg-white p-6 shadow-sm">
+            <ExecutiveSummary />
+          </section>
 
           {/* Milestones & RAID Log */}
           <div className="grid gap-6 md:grid-cols-2">

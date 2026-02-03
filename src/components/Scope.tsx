@@ -37,9 +37,9 @@ export default function Scope() {
 
   return (
     <div>
-      <div className="flex items-center gap-2 mb-3">
-        <h2 className="text-lg font-semibold text-gray-700">Scope</h2>
-        <span className="text-sm text-gray-400">-</span>
+      <div className="flex items-center gap-2 mb-2">
+        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Scope</h3>
+        <span className="text-sm text-gray-300">-</span>
         {editingPeriod ? (
           <input
             ref={periodRef}
@@ -68,7 +68,7 @@ export default function Scope() {
             ref={scopeRef}
             value={scopeDraft}
             onChange={(e) => setScopeDraft(e.target.value)}
-            rows={6}
+            rows={3}
             className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:border-blue-400 focus:outline-none"
           />
           <div className="flex gap-2 mt-2">
@@ -83,9 +83,9 @@ export default function Scope() {
       ) : (
         <div
           onClick={() => { setScopeDraft(data.scopeText); setEditingScope(true); }}
-          className="cursor-pointer rounded px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 min-h-[60px] whitespace-pre-wrap"
+          className="cursor-pointer rounded px-2 py-1 text-sm text-gray-700 hover:bg-gray-50 whitespace-pre-wrap"
         >
-          {data.scopeText || <span className="text-gray-400 italic">Click to add scope definition...</span>}
+          {data.scopeText || <span className="text-gray-400 italic">Click to add scope...</span>}
         </div>
       )}
     </div>
