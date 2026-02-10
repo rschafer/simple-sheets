@@ -36,7 +36,7 @@ export default function Scope() {
   };
 
   return (
-    <div>
+    <div className="min-w-0 overflow-hidden">
       <div className="flex items-center gap-2 mb-2">
         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Scope</h3>
         <span className="text-sm text-gray-300">-</span>
@@ -83,7 +83,7 @@ export default function Scope() {
       ) : (
         <div
           onClick={() => { setScopeDraft(data.scopeText); setEditingScope(true); }}
-          className="cursor-pointer rounded px-2 py-1 text-sm text-gray-700 hover:bg-gray-50 whitespace-pre-wrap"
+          className="cursor-pointer rounded px-2 py-1 text-sm text-gray-700 hover:bg-gray-50 whitespace-pre-wrap break-words overflow-hidden"
         >
           {data.scopeText || <span className="text-gray-400 italic">Click to add scope...</span>}
         </div>

@@ -95,3 +95,8 @@ Use the Task tool with `subagent_type` parameter:
 3. Use `/plan` to start your project workflow
 4. Use `/execute` to build with agent assistance
 5. Track progress with `/todo`
+
+## Webpages
+
+### Simplesheets
+https://simple-sheets.vercel.app/
