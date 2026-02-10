@@ -13,10 +13,13 @@ import Scope from "@/components/Scope";
 import Milestones from "@/components/Milestones";
 import RaidLog from "@/components/RaidLog";
 import ProjectPlan from "@/components/ProjectPlan";
+import ShareDialog from "@/components/ShareDialog";
+import Notifications from "@/components/Notifications";
 
 // This component wraps the dashboard with program-specific data from navigation
 function ProgramDashboardInner() {
   return (
+    <>
     <div className="p-8">
       <div className="grid gap-6 max-w-6xl">
         {/* Header: Project Name + Status + Delivery Date + Contacts + Scope + Key Links */}
@@ -62,6 +65,9 @@ function ProgramDashboardInner() {
         </section>
       </div>
     </div>
+    <Notifications />
+    <ShareDialog />
+    </>
   );
 }
 

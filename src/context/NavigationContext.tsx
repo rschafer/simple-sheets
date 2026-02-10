@@ -151,10 +151,11 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
   }, [navData]);
 
   const getCurrentProgram = useCallback((): Program | null => {
-    if (navData.currentView.type !== "program") return null;
+    const view = navData.currentView;
+    if (view.type !== "program") return null;
     const pa = getCurrentProductArea();
     if (!pa) return null;
-    return pa.programs.find((p) => p.id === navData.currentView.programId) || null;
+    return pa.programs.find((p) => p.id === view.programId) || null;
   }, [navData, getCurrentProductArea]);
 
   const updateProgramData = useCallback((programId: string, data: Partial<DashboardData>) => {

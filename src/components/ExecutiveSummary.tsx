@@ -178,7 +178,7 @@ export default function ExecutiveSummary() {
     // Build Risks from RAID items
     const risks = raidItems.filter((r: RaidItem) => r.type === "Risk" || r.type === "Issue");
     let risksAndMitigation = risks.length > 0
-      ? risks.map((r: RaidItem) => `- [${r.severity}] ${r.summary}${r.nextSteps ? ` - ${r.nextSteps}` : ""}`).join("\n")
+      ? risks.map((r: RaidItem) => `- [${r.type}] ${r.summary}${r.nextSteps ? ` - ${r.nextSteps}` : ""}`).join("\n")
       : "- No open risks or issues";
 
     // Build Impact from dependencies
