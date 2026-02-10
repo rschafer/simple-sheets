@@ -14,12 +14,31 @@ function HealthDot({ status }: { status: HealthStatus }) {
   return <span className={`inline-block w-2 h-2 rounded-full ${healthColors[status]}`} />;
 }
 
-function ProductAreaSection({ productArea }: { productArea: ProductArea }) {
+function ProductAreaSection({ productArea, collapsed }: { productArea: ProductArea; collapsed: boolean }) {
   const { currentView, setCurrentView } = useNavigation();
   const [expanded, setExpanded] = useState(true);
 
   const isProductAreaActive =
     currentView.type === "product-area" && currentView.productAreaId === productArea.id;
+
+  // Get first letter for collapsed view
+  const initial = productArea.name.split(" ").pop()?.charAt(0) || "P";
+
+  if (collapsed) {
+    return (
+      <div className="mb-2">
+        <button
+          onClick={() => setCurrentView({ type: "product-area", productAreaId: productArea.id })}
+          className={`w-full flex items-center justify-center p-2 text-sm font-medium rounded hover:bg-gray-100 ${
+            isProductAreaActive ? "bg-blue-50 text-blue-700" : "text-gray-700"
+          }`}
+          title={productArea.name}
+        >
+          {initial}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="mb-2">
@@ -77,15 +96,34 @@ function ProductAreaSection({ productArea }: { productArea: ProductArea }) {
 
 export default function Sidebar() {
   const { productAreas } = useNavigation();
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 h-screen overflow-y-auto flex-shrink-0">
-      <div className="p-4 border-b border-gray-200">
-        <h1 className="text-lg font-bold text-gray-800">SimpleSheets</h1>
+    <aside
+      className={`bg-white border-r border-gray-200 h-screen overflow-y-auto flex-shrink-0 transition-all duration-200 ${
+        collapsed ? "w-14" : "w-64"
+      }`}
+    >
+      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+        {!collapsed && <h1 className="text-lg font-bold text-gray-800">SimpleSheets</h1>}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          <svg
+            className={`w-5 h-5 transition-transform ${collapsed ? "rotate-180" : ""}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+          </svg>
+        </button>
       </div>
-      <nav className="p-3">
+      <nav className={collapsed ? "p-2" : "p-3"}>
         {productAreas.map((pa) => (
-          <ProductAreaSection key={pa.id} productArea={pa} />
+          <ProductAreaSection key={pa.id} productArea={pa} collapsed={collapsed} />
         ))}
       </nav>
     </aside>
