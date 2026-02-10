@@ -39,13 +39,11 @@ export interface Milestone {
 }
 
 export type RaidType = "Risk" | "Action" | "Issue" | "Dependency";
-export type RaidSeverity = "Critical" | "High" | "Medium" | "Low";
 export type RaidStatus = "Open" | "In Progress" | "Closed";
 
 export interface RaidItem {
   id: string;
   summary: string;
-  severity: RaidSeverity;
   type: RaidType;
   status: RaidStatus;
   assignedTo: string;
@@ -150,28 +148,41 @@ function saveToStorage(data: DashboardData) {
   }
 }
 
-export function DashboardProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<DashboardData>(defaultData);
-  const [loaded, setLoaded] = useState(false);
-  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+interface DashboardProviderProps {
+  children: ReactNode;
+  initialData?: DashboardData;
+  onUpdate?: (data: Partial<DashboardData>) => void;
+}
 
-  // Load from localStorage on mount
+export function DashboardProvider({ children, initialData, onUpdate }: DashboardProviderProps) {
+  const [data, setData] = useState<DashboardData>(initialData || defaultData);
+  const [loaded, setLoaded] = useState(!!initialData);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isManaged = !!initialData;
+
+  // Load from localStorage on mount (only if not managed externally)
   useEffect(() => {
-    setData(loadFromStorage());
-    setLoaded(true);
-  }, []);
+    if (!isManaged) {
+      setData(loadFromStorage());
+      setLoaded(true);
+    }
+  }, [isManaged]);
 
   // Auto-save on every change (debounced 300ms)
   useEffect(() => {
     if (!loaded) return;
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      saveToStorage(data);
+      if (isManaged && onUpdate) {
+        onUpdate(data);
+      } else {
+        saveToStorage(data);
+      }
     }, 300);
     return () => {
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
-  }, [data, loaded]);
+  }, [data, loaded, isManaged, onUpdate]);
 
   const updateData = useCallback((partial: Partial<DashboardData>) => {
     setData((prev) => ({ ...prev, ...partial }));

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { DashboardProvider } from "@/context/DashboardContext";
+import { NavigationProvider } from "@/context/NavigationContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Project Dashboard",
-  description: "Single-page project dashboard",
+  title: "SimpleSheets",
+  description: "Program management dashboard",
 };
 
 export default function RootLayout({
@@ -28,7 +28,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <DashboardProvider>{children}</DashboardProvider>
+        <NavigationProvider>{children}</NavigationProvider>
       </body>
     </html>
   );

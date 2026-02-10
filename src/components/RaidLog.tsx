@@ -5,7 +5,6 @@ import {
   useDashboard,
   RaidItem,
   RaidType,
-  RaidSeverity,
   RaidStatus,
 } from "@/context/DashboardContext";
 
@@ -14,22 +13,13 @@ function generateId() {
 }
 
 const raidTypes: RaidType[] = ["Risk", "Action", "Issue", "Dependency"];
-const severities: RaidSeverity[] = ["Critical", "High", "Medium", "Low"];
 const raidStatuses: RaidStatus[] = ["Open", "In Progress", "Closed"];
-
-const severityColors: Record<RaidSeverity, string> = {
-  Critical: "bg-red-100 text-red-700",
-  High: "bg-orange-100 text-orange-700",
-  Medium: "bg-yellow-100 text-yellow-700",
-  Low: "bg-gray-100 text-gray-600",
-};
 
 export default function RaidLog() {
   const { data, updateData } = useDashboard();
   const [collapsed, setCollapsed] = useState(false);
   const [panelItem, setPanelItem] = useState<RaidItem | null>(null);
   const [filterType, setFilterType] = useState<RaidType | "">("");
-  const [filterSeverity, setFilterSeverity] = useState<RaidSeverity | "">("");
   const [filterStatus, setFilterStatus] = useState<RaidStatus | "">("");
   const [sortField, setSortField] = useState<keyof RaidItem>("summary");
   const [sortAsc, setSortAsc] = useState(true);
@@ -38,7 +28,6 @@ export default function RaidLog() {
     const item: RaidItem = {
       id: generateId(),
       summary: "",
-      severity: "Medium",
       type: "Risk",
       status: "Open",
       assignedTo: "",
@@ -62,7 +51,6 @@ export default function RaidLog() {
 
   const filtered = data.raidItems
     .filter((r) => (!filterType || r.type === filterType))
-    .filter((r) => (!filterSeverity || r.severity === filterSeverity))
     .filter((r) => (!filterStatus || r.status === filterStatus));
 
   const sorted = [...filtered].sort((a, b) => {
@@ -104,10 +92,6 @@ export default function RaidLog() {
               <option value="">All Types</option>
               {raidTypes.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
-            <select value={filterSeverity} onChange={(e) => setFilterSeverity(e.target.value as RaidSeverity | "")} className="rounded border px-2 py-1 text-xs">
-              <option value="">All Severities</option>
-              {severities.map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
             <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value as RaidStatus | "")} className="rounded border px-2 py-1 text-xs">
               <option value="">All Statuses</option>
               {raidStatuses.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -123,9 +107,6 @@ export default function RaidLog() {
                   <tr className="border-b text-left text-xs text-gray-500 uppercase tracking-wider">
                     <th className="pb-2 pr-3 cursor-pointer" onClick={() => toggleSort("summary")}>
                       Summary<SortIcon field="summary" />
-                    </th>
-                    <th className="pb-2 pr-3 cursor-pointer" onClick={() => toggleSort("severity")}>
-                      Severity<SortIcon field="severity" />
                     </th>
                     <th className="pb-2 pr-3 cursor-pointer" onClick={() => toggleSort("type")}>
                       Type<SortIcon field="type" />
@@ -150,15 +131,6 @@ export default function RaidLog() {
                           rows={2}
                           className="w-full border border-gray-200 rounded px-2 py-1 text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 outline-none resize-y min-h-[2.5rem]"
                         />
-                      </td>
-                      <td className="py-2 pr-3">
-                        <select
-                          value={item.severity}
-                          onChange={(e) => updateItem(item.id, { severity: e.target.value as RaidSeverity })}
-                          className={`rounded px-2 py-1 text-xs font-medium border-0 cursor-pointer ${severityColors[item.severity]}`}
-                        >
-                          {severities.map((s) => <option key={s} value={s}>{s}</option>)}
-                        </select>
                       </td>
                       <td className="py-2 pr-3">
                         <select
@@ -229,27 +201,15 @@ export default function RaidLog() {
                   className="w-full rounded border px-3 py-2 text-sm"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Type</label>
-                  <select
-                    value={panelItem.type}
-                    onChange={(e) => { const v = e.target.value as RaidType; updateItem(panelItem.id, { type: v }); setPanelItem({ ...panelItem, type: v }); }}
-                    className="w-full rounded border px-3 py-2 text-sm"
-                  >
-                    {raidTypes.map((t) => <option key={t} value={t}>{t}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 mb-1">Severity</label>
-                  <select
-                    value={panelItem.severity}
-                    onChange={(e) => { const v = e.target.value as RaidSeverity; updateItem(panelItem.id, { severity: v }); setPanelItem({ ...panelItem, severity: v }); }}
-                    className="w-full rounded border px-3 py-2 text-sm"
-                  >
-                    {severities.map((s) => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Type</label>
+                <select
+                  value={panelItem.type}
+                  onChange={(e) => { const v = e.target.value as RaidType; updateItem(panelItem.id, { type: v }); setPanelItem({ ...panelItem, type: v }); }}
+                  className="w-full rounded border px-3 py-2 text-sm"
+                >
+                  {raidTypes.map((t) => <option key={t} value={t}>{t}</option>)}
+                </select>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>

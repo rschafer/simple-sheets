@@ -1,63 +1,14 @@
-import ProjectName from "@/components/ProjectName";
-import KeyLinks from "@/components/KeyLinks";
-import PrimaryContacts from "@/components/PrimaryContacts";
-import ProgramStatus from "@/components/ProgramStatus";
-import DeliveryDate from "@/components/DeliveryDate";
-import ExecutiveSummary from "@/components/ExecutiveSummary";
-import Scope from "@/components/Scope";
-import Milestones from "@/components/Milestones";
-import RaidLog from "@/components/RaidLog";
-import ProjectPlan from "@/components/ProjectPlan";
+import Sidebar from "@/components/Sidebar";
+import MainContent from "@/components/MainContent";
 import ShareDialog from "@/components/ShareDialog";
 import Notifications from "@/components/Notifications";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="mx-auto max-w-6xl px-8 py-8">
-        <div className="grid gap-6">
-          {/* Header: Project Name + Status + Delivery Date + Contacts + Scope + Key Links */}
-          <section className="rounded-lg border bg-white p-6 shadow-sm">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-start justify-between gap-6 flex-wrap">
-                <div className="flex-1 min-w-0">
-                  <ProjectName />
-                </div>
-                <div className="flex items-center gap-4 flex-shrink-0 flex-wrap">
-                  <ProgramStatus />
-                  <DeliveryDate />
-                </div>
-              </div>
-              <div className="border-t pt-4 grid gap-4 md:grid-cols-2">
-                <PrimaryContacts />
-                <Scope />
-              </div>
-              <div className="border-t pt-4">
-                <KeyLinks />
-              </div>
-            </div>
-          </section>
-
-          {/* Executive Summary */}
-          <section className="rounded-lg border bg-white p-6 shadow-sm">
-            <ExecutiveSummary />
-          </section>
-
-          {/* Milestones & RAID Log */}
-          <div className="grid gap-6 md:grid-cols-2">
-            <section className="rounded-lg border bg-white p-6 shadow-sm">
-              <Milestones />
-            </section>
-            <section className="rounded-lg border bg-white p-6 shadow-sm">
-              <RaidLog />
-            </section>
-          </div>
-
-          {/* Project Plan */}
-          <section className="rounded-lg border bg-white p-6 shadow-sm">
-            <ProjectPlan />
-          </section>
-        </div>
+    <div className="min-h-screen bg-gray-50 flex">
+      <Sidebar />
+      <main className="flex-1 overflow-y-auto">
+        <MainContent />
       </main>
       <Notifications />
       <ShareDialog />
