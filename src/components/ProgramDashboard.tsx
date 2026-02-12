@@ -127,9 +127,11 @@ function ProgramDashboardInner() {
                 <ProgramAiReportButton />
               </div>
             </div>
-            <div className="border-t pt-4 grid gap-4 grid-cols-2 md:grid-cols-4">
+            <div className="border-t pt-4 flex items-center gap-6">
               <PhaseSelector />
               <DeliveryDate />
+            </div>
+            <div className="border-t pt-4 grid gap-4 md:grid-cols-2">
               <PrimaryContacts />
               <Scope />
             </div>
