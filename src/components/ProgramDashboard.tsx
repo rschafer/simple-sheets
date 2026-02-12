@@ -119,11 +119,13 @@ function ProgramDashboardInner() {
             <div className="flex items-start justify-between gap-6 flex-wrap">
               <div className="flex-1 min-w-0">
                 <ProjectName />
+                <div className="flex items-center gap-4 mt-2 flex-wrap">
+                  <ProgramStatus />
+                  <DeliveryDate />
+                </div>
               </div>
-              <div className="flex items-center gap-4 flex-shrink-0 flex-wrap">
+              <div className="flex-shrink-0">
                 <ProgramAiReportButton />
-                <ProgramStatus />
-                <DeliveryDate />
               </div>
             </div>
             <div className="border-t pt-4 grid gap-4 md:grid-cols-2">
