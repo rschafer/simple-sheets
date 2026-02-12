@@ -218,7 +218,7 @@ export default function ExecutiveSummary() {
             </button>
             <span
               className="text-gray-400 hover:text-gray-600 cursor-help"
-              title="Uses AI to analyze your project plan, milestones, and RAID log to generate a natural language executive summary."
+              title="Uses Claude AI (Anthropic) to analyze your project plan, milestones, and RAID log to generate a natural language executive summary."
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -277,6 +277,7 @@ export default function ExecutiveSummary() {
                   Cancel
                 </button>
               </div>
+              <p className="text-xs text-gray-400 mt-3">Powered by Claude AI (Anthropic)</p>
             </div>
           </div>
         </div>
