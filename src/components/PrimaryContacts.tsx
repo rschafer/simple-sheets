@@ -74,7 +74,7 @@ export default function PrimaryContacts() {
                       value={editRole}
                       onChange={(e) => setEditRole(e.target.value)}
                       placeholder="Role"
-                      className="w-40 rounded border px-2 py-1 text-sm"
+                      className="w-40 rounded border px-2 py-1 text-sm text-gray-900"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") saveEdit(contact.id);
                         if (e.key === "Escape") setEditingId(null);
@@ -84,7 +84,7 @@ export default function PrimaryContacts() {
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
                       placeholder="Name"
-                      className="flex-1 rounded border px-2 py-1 text-sm"
+                      className="flex-1 rounded border px-2 py-1 text-sm text-gray-900"
                       onKeyDown={(e) => {
                         if (e.key === "Enter") saveEdit(contact.id);
                         if (e.key === "Escape") setEditingId(null);
