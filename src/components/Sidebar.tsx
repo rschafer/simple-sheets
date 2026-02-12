@@ -1,8 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useNavigation, ProductArea } from "@/context/NavigationContext";
 import { HealthStatus } from "@/context/DashboardContext";
+
+const MIN_WIDTH = 56; // Collapsed width
+const MAX_WIDTH = 400;
+const DEFAULT_WIDTH = 256;
 
 const healthColors: Record<HealthStatus, string> = {
   green: "bg-green-500",
@@ -96,19 +100,47 @@ function ProductAreaSection({ productArea, collapsed }: { productArea: ProductAr
 
 export default function Sidebar() {
   const { productAreas } = useNavigation();
-  const [collapsed, setCollapsed] = useState(false);
+  const [width, setWidth] = useState(DEFAULT_WIDTH);
+  const isResizing = useRef(false);
+  const sidebarRef = useRef<HTMLElement>(null);
+
+  const collapsed = width <= MIN_WIDTH + 20;
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    isResizing.current = true;
+    document.body.style.cursor = "ew-resize";
+    document.body.style.userSelect = "none";
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing.current) return;
+      const newWidth = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, e.clientX));
+      setWidth(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      isResizing.current = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  }, []);
 
   return (
     <aside
-      className={`bg-white border-r border-gray-200 h-screen overflow-y-auto flex-shrink-0 transition-all duration-200 ${
-        collapsed ? "w-14" : "w-64"
-      }`}
+      ref={sidebarRef}
+      style={{ width: `${width}px` }}
+      className="bg-white border-r border-gray-200 h-screen overflow-y-auto flex-shrink-0 relative"
     >
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-        {!collapsed && <h1 className="text-lg font-bold text-gray-800">SimpleSheets</h1>}
+        {!collapsed && <h1 className="text-lg font-bold text-gray-800 truncate">SimpleSheets</h1>}
         <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+          onClick={() => setWidth(collapsed ? DEFAULT_WIDTH : MIN_WIDTH)}
+          className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded flex-shrink-0"
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           <svg
@@ -126,6 +158,12 @@ export default function Sidebar() {
           <ProductAreaSection key={pa.id} productArea={pa} collapsed={collapsed} />
         ))}
       </nav>
+      {/* Resize handle */}
+      <div
+        onMouseDown={handleMouseDown}
+        className="absolute top-0 right-0 w-1 h-full cursor-ew-resize hover:bg-blue-500 transition-colors"
+        title="Drag to resize"
+      />
     </aside>
   );
 }

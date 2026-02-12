@@ -165,7 +165,12 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
         ...pa,
         programs: pa.programs.map((p) =>
           p.id === programId
-            ? { ...p, data: { ...p.data, ...data }, healthStatus: data.healthStatus || p.healthStatus }
+            ? {
+                ...p,
+                name: data.projectName ?? p.name,
+                data: { ...p.data, ...data },
+                healthStatus: data.healthStatus || p.healthStatus,
+              }
             : p
         ),
       })),

@@ -21,6 +21,7 @@ export default function ProjectPlan() {
       status: "Not Started",
       startDate: "",
       endDate: "",
+      dependencies: "",
       notes: "",
       indent,
     };
@@ -47,17 +48,17 @@ export default function ProjectPlan() {
 
   const loadTemplate = () => {
     const template: ProjectPlanRow[] = [
-      { id: generateId(), task: "Phase 1: Discovery", assignee: "", status: "Not Started", startDate: "", endDate: "", notes: "", indent: 0 },
-      { id: generateId(), task: "Stakeholder interviews", assignee: "", status: "Not Started", startDate: "", endDate: "", notes: "", indent: 1 },
-      { id: generateId(), task: "Requirements gathering", assignee: "", status: "Not Started", startDate: "", endDate: "", notes: "", indent: 1 },
-      { id: generateId(), task: "Phase 2: Planning", assignee: "", status: "Not Started", startDate: "", endDate: "", notes: "", indent: 0 },
-      { id: generateId(), task: "Architecture design", assignee: "", status: "Not Started", startDate: "", endDate: "", notes: "", indent: 1 },
-      { id: generateId(), task: "Sprint planning", assignee: "", status: "Not Started", startDate: "", endDate: "", notes: "", indent: 1 },
-      { id: generateId(), task: "Phase 3: Execution", assignee: "", status: "Not Started", startDate: "", endDate: "", notes: "", indent: 0 },
-      { id: generateId(), task: "Development Sprint 1", assignee: "", status: "Not Started", startDate: "", endDate: "", notes: "", indent: 1 },
-      { id: generateId(), task: "Development Sprint 2", assignee: "", status: "Not Started", startDate: "", endDate: "", notes: "", indent: 1 },
-      { id: generateId(), task: "QA & Testing", assignee: "", status: "Not Started", startDate: "", endDate: "", notes: "", indent: 1 },
-      { id: generateId(), task: "Launch", assignee: "", status: "Not Started", startDate: "", endDate: "", notes: "", indent: 1 },
+      { id: generateId(), task: "Phase 1: Discovery", assignee: "", status: "Not Started", startDate: "", endDate: "", dependencies: "", notes: "", indent: 0 },
+      { id: generateId(), task: "Stakeholder interviews", assignee: "", status: "Not Started", startDate: "", endDate: "", dependencies: "", notes: "", indent: 1 },
+      { id: generateId(), task: "Requirements gathering", assignee: "", status: "Not Started", startDate: "", endDate: "", dependencies: "", notes: "", indent: 1 },
+      { id: generateId(), task: "Phase 2: Planning", assignee: "", status: "Not Started", startDate: "", endDate: "", dependencies: "", notes: "", indent: 0 },
+      { id: generateId(), task: "Architecture design", assignee: "", status: "Not Started", startDate: "", endDate: "", dependencies: "", notes: "", indent: 1 },
+      { id: generateId(), task: "Sprint planning", assignee: "", status: "Not Started", startDate: "", endDate: "", dependencies: "", notes: "", indent: 1 },
+      { id: generateId(), task: "Phase 3: Execution", assignee: "", status: "Not Started", startDate: "", endDate: "", dependencies: "", notes: "", indent: 0 },
+      { id: generateId(), task: "Development Sprint 1", assignee: "", status: "Not Started", startDate: "", endDate: "", dependencies: "", notes: "", indent: 1 },
+      { id: generateId(), task: "Development Sprint 2", assignee: "", status: "Not Started", startDate: "", endDate: "", dependencies: "", notes: "", indent: 1 },
+      { id: generateId(), task: "QA & Testing", assignee: "", status: "Not Started", startDate: "", endDate: "", dependencies: "", notes: "", indent: 1 },
+      { id: generateId(), task: "Launch", assignee: "", status: "Not Started", startDate: "", endDate: "", dependencies: "", notes: "", indent: 1 },
     ];
     updateData({ projectPlan: template });
   };
@@ -101,6 +102,7 @@ export default function ProjectPlan() {
                     <th className="pb-2 pr-3 w-28">Status</th>
                     <th className="pb-2 pr-3 w-28">Start</th>
                     <th className="pb-2 pr-3 w-28">End</th>
+                    <th className="pb-2 pr-3 w-32">Dependencies</th>
                     <th className="pb-2 pr-3 w-32">Notes</th>
                     <th className="pb-2 w-24"></th>
                   </tr>
@@ -151,6 +153,14 @@ export default function ProjectPlan() {
                           value={row.endDate}
                           onChange={(e) => updateRow(row.id, { endDate: e.target.value })}
                           className="bg-transparent border-0 outline-none text-gray-700 text-xs cursor-pointer"
+                        />
+                      </td>
+                      <td className="py-1.5 pr-3">
+                        <input
+                          value={row.dependencies || ""}
+                          onChange={(e) => updateRow(row.id, { dependencies: e.target.value })}
+                          placeholder="Dependencies"
+                          className="w-full bg-transparent border-0 outline-none text-gray-700 placeholder-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-300 rounded px-1 text-xs"
                         />
                       </td>
                       <td className="py-1.5 pr-3">

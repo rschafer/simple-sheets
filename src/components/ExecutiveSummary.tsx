@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useDashboard, ExecutiveSummary as ESType, ProjectPlanRow, RaidItem } from "@/context/DashboardContext";
+import { useDashboard, ExecutiveSummary as ESType } from "@/context/DashboardContext";
 
 function generateId() {
   return Math.random().toString(36).substring(2, 9);
@@ -51,36 +51,49 @@ const TEMPLATES = {
     risksAndMitigation: "",
     impactToOtherPrograms: "",
     labels: {
-      recentProgress: "Recent Progress",
-      nextSteps: "Next Steps",
-      risksAndMitigation: "Risks and Mitigation Plan",
-      impactToOtherPrograms: "Impact to Other Programs",
+      recentProgress: "Section 1",
+      nextSteps: "Section 2",
+      risksAndMitigation: "Risks and Mitigation",
+      impactToOtherPrograms: "Section 4",
     },
   },
-  wallace: {
-    name: "Wallace",
+  productArea1: {
+    name: "Product Area 1",
     recentProgress: "- ",
     nextSteps: "- ",
     risksAndMitigation: "- ",
     impactToOtherPrograms: "- ",
     labels: {
-      recentProgress: "Recent Progress",
-      nextSteps: "Next Steps",
-      risksAndMitigation: "Risks and Mitigation Plan",
-      impactToOtherPrograms: "Impact to Other Programs",
+      recentProgress: "Delivery Milestones",
+      nextSteps: "Upcoming Releases",
+      risksAndMitigation: "Risks and Mitigation",
+      impactToOtherPrograms: "Technical Debt",
     },
   },
-  randall: {
-    name: "Randall",
+  productArea2: {
+    name: "Product Area 2",
     recentProgress: "- ",
     nextSteps: "- ",
     risksAndMitigation: "- ",
-    impactToOtherPrograms: "",
+    impactToOtherPrograms: "- ",
     labels: {
-      recentProgress: "What We Delivered Since Last Meeting",
-      nextSteps: "What Is In Progress",
-      risksAndMitigation: "Risks and Action Plan",
-      impactToOtherPrograms: "",
+      recentProgress: "Business Impact & KPIs",
+      nextSteps: "Strategic Priorities",
+      risksAndMitigation: "Risks and Mitigation",
+      impactToOtherPrograms: "Budget & Resource Summary",
+    },
+  },
+  productArea3: {
+    name: "Product Area 3",
+    recentProgress: "- ",
+    nextSteps: "- ",
+    risksAndMitigation: "- ",
+    impactToOtherPrograms: "- ",
+    labels: {
+      recentProgress: "Customer Feedback & Adoption",
+      nextSteps: "Roadmap Highlights",
+      risksAndMitigation: "Risks and Mitigation",
+      impactToOtherPrograms: "Cross-Team Dependencies",
     },
   },
 };
@@ -89,12 +102,12 @@ export default function ExecutiveSummary() {
   const { data, updateData } = useDashboard();
   const [editing, setEditing] = useState(false);
   const [viewingHistoryId, setViewingHistoryId] = useState<string | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<keyof typeof TEMPLATES>("wallace");
+  const [selectedTemplate, setSelectedTemplate] = useState<keyof typeof TEMPLATES>("productArea1");
   const [draft, setDraft] = useState<Omit<ESType, "id" | "date">>({
-    recentProgress: TEMPLATES.wallace.recentProgress,
-    nextSteps: TEMPLATES.wallace.nextSteps,
-    risksAndMitigation: TEMPLATES.wallace.risksAndMitigation,
-    impactToOtherPrograms: TEMPLATES.wallace.impactToOtherPrograms,
+    recentProgress: TEMPLATES.productArea1.recentProgress,
+    nextSteps: TEMPLATES.productArea1.nextSteps,
+    risksAndMitigation: TEMPLATES.productArea1.risksAndMitigation,
+    impactToOtherPrograms: TEMPLATES.productArea1.impactToOtherPrograms,
   });
   const [showAiModal, setShowAiModal] = useState(false);
   const [aiStartDate, setAiStartDate] = useState("");
@@ -118,85 +131,47 @@ export default function ExecutiveSummary() {
     setViewingHistoryId(null);
   };
 
-  // Filter project plan items by date range
-  const getItemsInDateRange = (startDate: string, endDate: string) => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    const planItems = data.projectPlan.filter((item: ProjectPlanRow) => {
-      if (!item.startDate && !item.endDate) return false;
-      const itemStart = item.startDate ? new Date(item.startDate) : null;
-      const itemEnd = item.endDate ? new Date(item.endDate) : null;
-
-      // Include if item overlaps with date range
-      if (itemStart && itemEnd) {
-        return itemStart <= end && itemEnd >= start;
-      }
-      if (itemStart) return itemStart >= start && itemStart <= end;
-      if (itemEnd) return itemEnd >= start && itemEnd <= end;
-      return false;
-    });
-
-    const raidItems = data.raidItems.filter((item: RaidItem) => {
-      // Include open RAID items
-      return item.status !== "Closed";
-    });
-
-    return { planItems, raidItems };
-  };
-
-  // Generate summary from project plan data
-  const generateAiSummary = () => {
+  // Generate summary using AI API
+  const generateAiSummary = async () => {
     if (!aiStartDate || !aiEndDate) return;
 
     setGenerating(true);
 
-    const { planItems, raidItems } = getItemsInDateRange(aiStartDate, aiEndDate);
+    try {
+      const response = await fetch("/api/generate-summary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          projectName: data.projectName,
+          projectPlan: data.projectPlan,
+          raidItems: data.raidItems,
+          milestones: data.milestones,
+          startDate: aiStartDate,
+          endDate: aiEndDate,
+        }),
+      });
 
-    // Build Recent Progress from completed or in-progress items
-    const completedItems = planItems.filter((p: ProjectPlanRow) => p.status === "Complete");
-    const inProgressItems = planItems.filter((p: ProjectPlanRow) => p.status === "In Progress");
+      if (!response.ok) {
+        throw new Error("Failed to generate summary");
+      }
 
-    let recentProgress = "";
-    if (completedItems.length > 0) {
-      recentProgress += completedItems.map((p: ProjectPlanRow) => `- Completed: ${p.task}`).join("\n");
+      const result = await response.json();
+
+      setDraft({
+        recentProgress: result.summary.recentProgress,
+        nextSteps: result.summary.nextSteps,
+        risksAndMitigation: result.summary.risksAndMitigation,
+        impactToOtherPrograms: result.summary.impactToOtherPrograms,
+      });
+
+      setShowAiModal(false);
+      setEditing(true);
+    } catch (error) {
+      console.error("AI generation error:", error);
+      alert("Failed to generate summary. Please try again.");
+    } finally {
+      setGenerating(false);
     }
-    if (inProgressItems.length > 0) {
-      if (recentProgress) recentProgress += "\n";
-      recentProgress += inProgressItems.map((p: ProjectPlanRow) => `- In progress: ${p.task}`).join("\n");
-    }
-    if (!recentProgress) recentProgress = "- No completed tasks in this period";
-
-    // Build Next Steps from upcoming items
-    const upcomingItems = planItems.filter((p: ProjectPlanRow) =>
-      p.status === "Not Started" || p.status === "In Progress"
-    );
-    let nextSteps = upcomingItems.length > 0
-      ? upcomingItems.slice(0, 5).map((p: ProjectPlanRow) => `- ${p.task}`).join("\n")
-      : "- No upcoming tasks scheduled";
-
-    // Build Risks from RAID items
-    const risks = raidItems.filter((r: RaidItem) => r.type === "Risk" || r.type === "Issue");
-    let risksAndMitigation = risks.length > 0
-      ? risks.map((r: RaidItem) => `- [${r.type}] ${r.summary}${r.nextSteps ? ` - ${r.nextSteps}` : ""}`).join("\n")
-      : "- No open risks or issues";
-
-    // Build Impact from dependencies
-    const dependencies = raidItems.filter((r: RaidItem) => r.type === "Dependency");
-    let impactToOtherPrograms = dependencies.length > 0
-      ? dependencies.map((r: RaidItem) => `- ${r.summary}`).join("\n")
-      : "- No dependencies identified";
-
-    setDraft({
-      recentProgress,
-      nextSteps,
-      risksAndMitigation,
-      impactToOtherPrograms,
-    });
-
-    setGenerating(false);
-    setShowAiModal(false);
-    setEditing(true);
   };
 
   const saveEntry = () => {
@@ -234,12 +209,22 @@ export default function ExecutiveSummary() {
               ))}
             </select>
           )}
-          <button
-            onClick={() => setShowAiModal(true)}
-            className="text-sm text-purple-600 hover:text-purple-800 font-medium"
-          >
-            Generate with AI
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setShowAiModal(true)}
+              className="text-sm text-purple-600 hover:text-purple-800 font-medium"
+            >
+              Generate with AI
+            </button>
+            <span
+              className="text-gray-400 hover:text-gray-600 cursor-help"
+              title="Uses AI to analyze your project plan, milestones, and RAID log to generate a natural language executive summary."
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </span>
+          </div>
           <button
             onClick={startNewEntry}
             className="text-sm text-blue-600 hover:text-blue-800 font-medium"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { useNavigation } from "@/context/NavigationContext";
 import { DashboardData, DashboardProvider } from "@/context/DashboardContext";
 import ProjectName from "@/components/ProjectName";
@@ -78,12 +78,28 @@ export default function ProgramDashboard() {
   // Create a stable key based on the current program to force remount
   const programKey = currentView.type === "program" ? currentView.programId : "none";
 
+  // Use ref to always have latest programId without recreating callback
+  const programIdRef = useRef(programKey);
+  useEffect(() => {
+    programIdRef.current = programKey;
+  }, [programKey]);
+
+  // Stable callback that reads from ref
+  const handleUpdate = useCallback(
+    (data: Partial<DashboardData>) => {
+      if (programIdRef.current && programIdRef.current !== "none") {
+        updateProgramData(programIdRef.current, data);
+      }
+    },
+    [updateProgramData]
+  );
+
   if (!program) {
     return <div className="p-8 text-gray-500">Program not found</div>;
   }
 
   return (
-    <DashboardProvider key={programKey} initialData={program.data} onUpdate={(data) => updateProgramData(program.id, data)}>
+    <DashboardProvider key={programKey} initialData={program.data} onUpdate={handleUpdate}>
       <ProgramDashboardInner />
     </DashboardProvider>
   );

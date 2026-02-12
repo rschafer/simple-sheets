@@ -57,6 +57,7 @@ export interface ProjectPlanRow {
   status: string;
   startDate: string;
   endDate: string;
+  dependencies: string;
   notes: string;
   indent: number;
 }
@@ -158,7 +159,13 @@ export function DashboardProvider({ children, initialData, onUpdate }: Dashboard
   const [data, setData] = useState<DashboardData>(initialData || defaultData);
   const [loaded, setLoaded] = useState(!!initialData);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const onUpdateRef = useRef(onUpdate);
   const isManaged = !!initialData;
+
+  // Keep the ref updated with latest callback
+  useEffect(() => {
+    onUpdateRef.current = onUpdate;
+  }, [onUpdate]);
 
   // Load from localStorage on mount (only if not managed externally)
   useEffect(() => {
@@ -173,8 +180,8 @@ export function DashboardProvider({ children, initialData, onUpdate }: Dashboard
     if (!loaded) return;
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      if (isManaged && onUpdate) {
-        onUpdate(data);
+      if (isManaged && onUpdateRef.current) {
+        onUpdateRef.current(data);
       } else {
         saveToStorage(data);
       }
@@ -182,7 +189,7 @@ export function DashboardProvider({ children, initialData, onUpdate }: Dashboard
     return () => {
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
-  }, [data, loaded, isManaged, onUpdate]);
+  }, [data, loaded, isManaged]);
 
   const updateData = useCallback((partial: Partial<DashboardData>) => {
     setData((prev) => ({ ...prev, ...partial }));
