@@ -19,6 +19,7 @@ export interface ProductArea {
 }
 
 export type ViewType =
+  | { type: "portfolio" }
   | { type: "product-area"; productAreaId: string }
   | { type: "program"; productAreaId: string; programId: string };
 
@@ -146,6 +147,7 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const getCurrentProductArea = useCallback((): ProductArea | null => {
+    if (navData.currentView.type === "portfolio") return null;
     const paId = navData.currentView.productAreaId;
     return navData.productAreas.find((pa) => pa.id === paId) || null;
   }, [navData]);

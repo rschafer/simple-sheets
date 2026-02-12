@@ -99,7 +99,7 @@ function ProductAreaSection({ productArea, collapsed }: { productArea: ProductAr
 }
 
 export default function Sidebar() {
-  const { productAreas } = useNavigation();
+  const { productAreas, currentView, setCurrentView } = useNavigation();
   const [width, setWidth] = useState(DEFAULT_WIDTH);
   const isResizing = useRef(false);
   const sidebarRef = useRef<HTMLElement>(null);
@@ -154,9 +154,40 @@ export default function Sidebar() {
         </button>
       </div>
       <nav className={collapsed ? "p-2" : "p-3"}>
-        {productAreas.map((pa) => (
-          <ProductAreaSection key={pa.id} productArea={pa} collapsed={collapsed} />
-        ))}
+        {/* Portfolio Overview link */}
+        {collapsed ? (
+          <div className="mb-3">
+            <button
+              onClick={() => setCurrentView({ type: "portfolio" })}
+              className={`w-full flex items-center justify-center p-2 text-sm font-medium rounded hover:bg-gray-100 ${
+                currentView.type === "portfolio" ? "bg-blue-50 text-blue-700" : "text-gray-700"
+              }`}
+              title="Portfolio Overview"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setCurrentView({ type: "portfolio" })}
+            className={`w-full flex items-center gap-2 px-2 py-2 mb-3 text-sm font-semibold rounded hover:bg-gray-100 ${
+              currentView.type === "portfolio" ? "bg-blue-50 text-blue-700" : "text-gray-700"
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            Portfolio Overview
+          </button>
+        )}
+
+        <div className={collapsed ? "" : "border-t border-gray-200 pt-3"}>
+          {productAreas.map((pa) => (
+            <ProductAreaSection key={pa.id} productArea={pa} collapsed={collapsed} />
+          ))}
+        </div>
       </nav>
       {/* Resize handle */}
       <div
