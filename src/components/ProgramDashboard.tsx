@@ -122,16 +122,14 @@ function ProgramDashboardInner() {
                   <ProjectName />
                   <HealthBadge />
                 </div>
-                <div className="flex items-center gap-4 mt-2 flex-wrap">
-                  <PhaseSelector />
-                  <DeliveryDate />
-                </div>
               </div>
               <div className="flex-shrink-0">
                 <ProgramAiReportButton />
               </div>
             </div>
-            <div className="border-t pt-4 grid gap-4 md:grid-cols-2">
+            <div className="border-t pt-4 grid gap-4 grid-cols-2 md:grid-cols-4">
+              <PhaseSelector />
+              <DeliveryDate />
               <PrimaryContacts />
               <Scope />
             </div>
