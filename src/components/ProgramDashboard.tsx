@@ -133,9 +133,6 @@ function ProgramDashboardInner() {
               <PrimaryContacts />
               <Scope />
             </div>
-            <div className="border-t pt-4">
-              <KeyLinks />
-            </div>
           </div>
         </section>
 
@@ -154,9 +151,16 @@ function ProgramDashboardInner() {
           </section>
         </div>
 
-        {/* Project Plan */}
+        {/* Project Plan + Key Links */}
         <section className="rounded-lg border bg-white p-6 shadow-sm">
-          <ProjectPlan />
+          <div className="flex gap-6">
+            <div className="flex-1 min-w-0">
+              <ProjectPlan />
+            </div>
+            <div className="w-64 flex-shrink-0 border-l pl-6">
+              <KeyLinks />
+            </div>
+          </div>
         </section>
       </div>
     </div>
