@@ -7,7 +7,7 @@ import { healthLabels, markdownToHtml } from "@/components/DashboardShared";
 import ProjectName from "@/components/ProjectName";
 import KeyLinks from "@/components/KeyLinks";
 import PrimaryContacts from "@/components/PrimaryContacts";
-import ProgramStatus from "@/components/ProgramStatus";
+import ProgramStatus, { HealthBadge, PhaseSelector } from "@/components/ProgramStatus";
 import DeliveryDate from "@/components/DeliveryDate";
 import ExecutiveSummary from "@/components/ExecutiveSummary";
 import Scope from "@/components/Scope";
@@ -118,9 +118,12 @@ function ProgramDashboardInner() {
           <div className="flex flex-col gap-4">
             <div className="flex items-start justify-between gap-6 flex-wrap">
               <div className="flex-1 min-w-0">
-                <ProjectName />
+                <div className="flex items-center gap-3">
+                  <ProjectName />
+                  <HealthBadge />
+                </div>
                 <div className="flex items-center gap-4 mt-2 flex-wrap">
-                  <ProgramStatus />
+                  <PhaseSelector />
                   <DeliveryDate />
                 </div>
               </div>
