@@ -48,17 +48,27 @@ export async function POST(request: NextRequest) {
 ${programDetails}
 
 ## Instructions
-Write a concise executive portfolio report (300 words max) with these sections:
+Write a concise executive portfolio report (300 words max) in plain English that is easy to scan quickly. Use this exact format:
 
-**Portfolio Health Summary** - Overall status in 2-3 sentences
+**Portfolio Health Summary**
+- One bullet summarizing overall health (e.g. "X of Y programs are on track...")
+- One bullet on the biggest change or trend since last period
 
-**Key Highlights** - Top 2-3 positive developments (bullet points)
+**Key Highlights**
+- 2-3 bullet points on positive developments. Be specific - name the program and what happened.
 
-**Areas of Concern** - Top 2-3 risks or issues requiring attention (bullet points)
+**Areas of Concern**
+- 2-3 bullet points on risks or issues. Name the program, the problem, and the impact.
 
-**Recommendations** - 2-3 actionable next steps for leadership (bullet points)
+**Recommended Actions**
+- 2-3 bullet points with concrete next steps for leadership. Each should start with an action verb.
 
-Write in a professional, direct tone. Be specific - reference actual program names and data. Do not use generic filler.`;
+Rules:
+- Use **bold** for section headings only
+- Use "- " for every bullet point
+- Keep each bullet to 1-2 sentences max
+- Write in plain, direct English - no jargon or filler
+- Reference actual program names and numbers from the data`;
 
     const message = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
