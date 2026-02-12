@@ -105,7 +105,7 @@ export default function RaidLog() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-left text-xs text-gray-500 uppercase tracking-wider">
-                    <th className="pb-2 pr-3 cursor-pointer" onClick={() => toggleSort("summary")}>
+                    <th className="pb-2 pr-3 min-w-[250px] cursor-pointer" onClick={() => toggleSort("summary")}>
                       Summary<SortIcon field="summary" />
                     </th>
                     <th className="pb-2 pr-3 cursor-pointer" onClick={() => toggleSort("type")}>

@@ -63,7 +63,7 @@ export default function Milestones() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b text-left text-xs text-gray-500 uppercase tracking-wider">
-                <th className="pb-2 pr-4">Milestone</th>
+                <th className="pb-2 pr-4 min-w-[250px]">Milestone</th>
                 <th className="pb-2 pr-4">Status</th>
                 <th className="pb-2 pr-4">Start</th>
                 <th className="pb-2 pr-4">Finish</th>

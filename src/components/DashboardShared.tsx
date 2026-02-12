@@ -23,7 +23,7 @@ export const healthDotColors: Record<HealthStatus, string> = {
 };
 
 // Simple markdown to HTML (bold + bullet lists + paragraphs)
-function markdownToHtml(md: string): string {
+export function markdownToHtml(md: string): string {
   const escaped = md
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")

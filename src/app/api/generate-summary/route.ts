@@ -87,19 +87,19 @@ ${dependencies.map(r => `- ${r.summary}`).join("\n") || "None"}
 
 ## Instructions
 
-Generate an executive summary with these 4 sections. Each section should be 2-3 sentences max, written in professional but concise language:
+Generate an executive summary with these 4 sections. Each section should have 2-3 bullet points, written in professional but concise language. Each bullet must start with "- " (dash space).
 
 1. **Recent Progress**: Highlight key accomplishments and completed work
 2. **Next Steps**: What's coming up and current focus areas
 3. **Risks and Mitigation**: Key risks/issues and how they're being addressed
 4. **Impact to Other Programs**: Any dependencies or impacts on other teams
 
-Respond in JSON format:
+Respond in JSON format. EVERY value MUST be bullet points, each starting with "- " on its own line:
 {
-  "recentProgress": "...",
-  "nextSteps": "...",
-  "risksAndMitigation": "...",
-  "impactToOtherPrograms": "..."
+  "recentProgress": "- bullet 1\n- bullet 2",
+  "nextSteps": "- bullet 1\n- bullet 2",
+  "risksAndMitigation": "- bullet 1\n- bullet 2",
+  "impactToOtherPrograms": "- bullet 1\n- bullet 2"
 }`;
 
     const message = await anthropic.messages.create({

@@ -97,7 +97,7 @@ export default function ProjectPlan() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-left text-xs text-gray-500 uppercase tracking-wider">
-                    <th className="pb-2 pr-3">Task</th>
+                    <th className="pb-2 pr-3 min-w-[250px]">Task</th>
                     <th className="pb-2 pr-3 w-28">Assignee</th>
                     <th className="pb-2 pr-3 w-28">Status</th>
                     <th className="pb-2 pr-3 w-28">Start</th>

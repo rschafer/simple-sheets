@@ -98,6 +98,24 @@ const TEMPLATES = {
   },
 };
 
+function SummaryBullets({ text }: { text: string }) {
+  const bullets = text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .map((line) => (line.startsWith("- ") ? line.slice(2) : line));
+
+  if (bullets.length === 0) return null;
+
+  return (
+    <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
+      {bullets.map((bullet, i) => (
+        <li key={i}>{bullet}</li>
+      ))}
+    </ul>
+  );
+}
+
 export default function ExecutiveSummary() {
   const { data, updateData } = useDashboard();
   const [editing, setEditing] = useState(false);
@@ -436,20 +454,20 @@ export default function ExecutiveSummary() {
           <p className="text-xs text-gray-400">{formatDate(displaySummary.date)}</p>
           <div>
             <h3 className="text-sm font-semibold text-gray-600 mb-1">Recent Progress</h3>
-            <p className="text-sm text-gray-700 whitespace-pre-wrap">{displaySummary.recentProgress}</p>
+            <SummaryBullets text={displaySummary.recentProgress} />
           </div>
           <div>
             <h3 className="text-sm font-semibold text-gray-600 mb-1">Next Steps</h3>
-            <p className="text-sm text-gray-700 whitespace-pre-wrap">{displaySummary.nextSteps}</p>
+            <SummaryBullets text={displaySummary.nextSteps} />
           </div>
           <div>
             <h3 className="text-sm font-semibold text-gray-600 mb-1">Risks and Mitigation Plan</h3>
-            <p className="text-sm text-gray-700 whitespace-pre-wrap">{displaySummary.risksAndMitigation}</p>
+            <SummaryBullets text={displaySummary.risksAndMitigation} />
           </div>
           {displaySummary.impactToOtherPrograms && (
             <div>
               <h3 className="text-sm font-semibold text-gray-600 mb-1">Impact to Other Programs</h3>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">{displaySummary.impactToOtherPrograms}</p>
+              <SummaryBullets text={displaySummary.impactToOtherPrograms} />
             </div>
           )}
         </div>

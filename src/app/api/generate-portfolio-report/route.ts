@@ -85,7 +85,21 @@ CRITICAL FORMAT RULES:
       throw new Error("No text response from AI");
     }
 
-    return NextResponse.json({ report: textContent.text });
+    // Post-process: ensure every non-heading, non-empty line starts with "- "
+    const enforced = textContent.text
+      .split("\n")
+      .map((line) => {
+        const trimmed = line.trim();
+        if (!trimmed) return "";
+        // Keep heading lines as-is (lines that are just **bold**)
+        if (/^\*\*.+\*\*$/.test(trimmed)) return trimmed;
+        // Ensure content lines start with "- "
+        if (!trimmed.startsWith("- ")) return `- ${trimmed}`;
+        return trimmed;
+      })
+      .join("\n");
+
+    return NextResponse.json({ report: enforced });
   } catch (error) {
     console.error("Portfolio report error:", error);
     return NextResponse.json(
