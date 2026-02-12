@@ -48,27 +48,31 @@ export async function POST(request: NextRequest) {
 ${programDetails}
 
 ## Instructions
-Write a concise executive portfolio report (300 words max) in plain English that is easy to scan quickly. Use this exact format:
+Respond ONLY in this exact format. Every content line MUST start with "- ". No plain paragraphs allowed.
 
 **Portfolio Health Summary**
-- One bullet summarizing overall health (e.g. "X of Y programs are on track...")
-- One bullet on the biggest change or trend since last period
+- [one bullet summarizing overall health]
+- [one bullet on the biggest change or trend]
 
 **Key Highlights**
-- 2-3 bullet points on positive developments. Be specific - name the program and what happened.
+- [positive development 1]
+- [positive development 2]
+- [positive development 3]
 
 **Areas of Concern**
-- 2-3 bullet points on risks or issues. Name the program, the problem, and the impact.
+- [risk or issue 1]
+- [risk or issue 2]
 
 **Recommended Actions**
-- 2-3 bullet points with concrete next steps for leadership. Each should start with an action verb.
+- [action verb + next step 1]
+- [action verb + next step 2]
 
-Rules:
-- Use **bold** for section headings only
-- Use "- " for every bullet point
-- Keep each bullet to 1-2 sentences max
-- Write in plain, direct English - no jargon or filler
-- Reference actual program names and numbers from the data`;
+CRITICAL FORMAT RULES:
+1. Section headings must be wrapped in ** on both sides
+2. EVERY line of content MUST begin with "- " (dash space). No exceptions. No plain text paragraphs.
+3. Keep each bullet to 1-2 sentences
+4. Write in plain, direct English
+5. Reference actual program names and numbers from the data above`;
 
     const message = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
