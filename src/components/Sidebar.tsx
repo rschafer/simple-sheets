@@ -71,7 +71,7 @@ function HealthDot({ status }: { status: HealthStatus }) {
 }
 
 function ProductAreaSection({ productArea, collapsed }: { productArea: ProductArea; collapsed: boolean }) {
-  const { currentView, setCurrentView, addProgram, deleteProgram } = useNavigation();
+  const { currentView, setCurrentView, addProgram, deleteProgram, isAdmin } = useNavigation();
   const [expanded, setExpanded] = useState(true);
   const [paMenuOpen, setPaMenuOpen] = useState(false);
   const [programMenuOpen, setProgramMenuOpen] = useState<string | null>(null);
@@ -117,32 +117,34 @@ function ProductAreaSection({ productArea, collapsed }: { productArea: ProductAr
         >
           {productArea.name}
         </button>
-        <div className="relative">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setPaMenuOpen(!paMenuOpen);
-            }}
-            className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity rounded hover:bg-gray-100 dark:hover:bg-gray-800"
-            title="More options"
-          >
-            <VerticalDots />
-          </button>
-          {paMenuOpen && (
-            <ContextMenu
-              items={[
-                {
-                  label: "Add New Program",
-                  onClick: () => {
-                    const name = prompt("Program name:");
-                    if (name?.trim()) addProgram(productArea.id, name.trim());
+        {isAdmin && (
+          <div className="relative">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setPaMenuOpen(!paMenuOpen);
+              }}
+              className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+              title="More options"
+            >
+              <VerticalDots />
+            </button>
+            {paMenuOpen && (
+              <ContextMenu
+                items={[
+                  {
+                    label: "Add New Program",
+                    onClick: () => {
+                      const name = prompt("Program name:");
+                      if (name?.trim()) addProgram(productArea.id, name.trim());
+                    },
                   },
-                },
-              ]}
-              onClose={() => setPaMenuOpen(false)}
-            />
-          )}
-        </div>
+                ]}
+                onClose={() => setPaMenuOpen(false)}
+              />
+            )}
+          </div>
+        )}
       </div>
 
       {expanded && (
@@ -170,34 +172,36 @@ function ProductAreaSection({ productArea, collapsed }: { productArea: ProductAr
                   <HealthDot status={program.healthStatus} />
                   <span className="truncate">{program.name}</span>
                 </button>
-                <div className="relative">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setProgramMenuOpen(programMenuOpen === program.id ? null : program.id);
-                    }}
-                    className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover/prog:opacity-100 transition-opacity rounded hover:bg-gray-100 dark:hover:bg-gray-800"
-                    title="More options"
-                  >
-                    <VerticalDots />
-                  </button>
-                  {programMenuOpen === program.id && (
-                    <ContextMenu
-                      items={[
-                        {
-                          label: "Delete",
-                          danger: true,
-                          onClick: () => {
-                            if (confirm(`Delete "${program.name}"?`)) {
-                              deleteProgram(productArea.id, program.id);
-                            }
+                {isAdmin && (
+                  <div className="relative">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setProgramMenuOpen(programMenuOpen === program.id ? null : program.id);
+                      }}
+                      className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover/prog:opacity-100 transition-opacity rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+                      title="More options"
+                    >
+                      <VerticalDots />
+                    </button>
+                    {programMenuOpen === program.id && (
+                      <ContextMenu
+                        items={[
+                          {
+                            label: "Delete",
+                            danger: true,
+                            onClick: () => {
+                              if (confirm(`Delete "${program.name}"?`)) {
+                                deleteProgram(productArea.id, program.id);
+                              }
+                            },
                           },
-                        },
-                      ]}
-                      onClose={() => setProgramMenuOpen(null)}
-                    />
-                  )}
-                </div>
+                        ]}
+                        onClose={() => setProgramMenuOpen(null)}
+                      />
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
