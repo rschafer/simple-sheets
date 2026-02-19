@@ -50,19 +50,19 @@ export default function Milestones() {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-gray-700">Milestones</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Milestones</h2>
         <button onClick={addMilestone} className="text-sm text-blue-600 hover:text-blue-800 font-medium">
           + Add Milestone
         </button>
       </div>
 
       {data.milestones.length === 0 ? (
-        <p className="text-gray-400 text-sm italic">No milestones yet. Click &quot;+ Add Milestone&quot; to get started.</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm italic">No milestones yet. Click &quot;+ Add Milestone&quot; to get started.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-xs text-gray-500 uppercase tracking-wider">
+              <tr className="border-b text-left text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                 <th className="pb-2 pr-4 min-w-[250px]">Milestone</th>
                 <th className="pb-2 pr-4">Status</th>
                 <th className="pb-2 pr-4">Start</th>

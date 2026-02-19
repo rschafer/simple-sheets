@@ -59,6 +59,8 @@ interface NavigationContextType {
   updateProgramData: (programId: string, data: Partial<DashboardData>) => void;
   updateProgramHealth: (programId: string, health: HealthStatus) => void;
   updateProductAreaTemplate: (productAreaId: string, template: ProductAreaTemplate) => void;
+  addProgram: (productAreaId: string, name: string) => void;
+  deleteProgram: (productAreaId: string, programId: string) => void;
 }
 
 const defaultDashboardData: DashboardData = {
@@ -269,6 +271,38 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const addProgram = useCallback((productAreaId: string, name: string) => {
+    const newId = `${productAreaId}-p${Date.now()}`;
+    setNavData((prev) => ({
+      ...prev,
+      productAreas: prev.productAreas.map((pa) =>
+        pa.id === productAreaId
+          ? { ...pa, programs: [...pa.programs, createProgram(newId, name)] }
+          : pa
+      ),
+      currentView: { type: "program", productAreaId, programId: newId },
+    }));
+  }, []);
+
+  const deleteProgram = useCallback((productAreaId: string, programId: string) => {
+    setNavData((prev) => {
+      const newProductAreas = prev.productAreas.map((pa) =>
+        pa.id === productAreaId
+          ? { ...pa, programs: pa.programs.filter((p) => p.id !== programId) }
+          : pa
+      );
+      // If we're currently viewing the deleted program, navigate to the product area
+      let newView = prev.currentView;
+      if (
+        prev.currentView.type === "program" &&
+        prev.currentView.programId === programId
+      ) {
+        newView = { type: "product-area", productAreaId };
+      }
+      return { ...prev, productAreas: newProductAreas, currentView: newView };
+    });
+  }, []);
+
   const setIsAdmin = useCallback((admin: boolean) => {
     setNavData((prev) => ({ ...prev, isAdmin: admin }));
   }, []);
@@ -301,6 +335,8 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
         updateProgramData,
         updateProgramHealth,
         updateProductAreaTemplate,
+        addProgram,
+        deleteProgram,
       }}
     >
       {children}

@@ -41,12 +41,12 @@ export default function Scope() {
       <div className="flex items-center gap-2">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+          className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
         >
           <span className={`transition-transform text-xs ${expanded ? "rotate-90" : ""}`}>&#9654;</span>
           Scope
         </button>
-        <span className="text-sm text-gray-300">-</span>
+        <span className="text-sm text-gray-400 dark:text-gray-500">-</span>
         {editingPeriod ? (
           <input
             ref={periodRef}
@@ -62,7 +62,7 @@ export default function Scope() {
         ) : (
           <span
             onClick={() => { setPeriodDraft(data.scopePeriod); setEditingPeriod(true); }}
-            className="text-sm text-gray-500 cursor-pointer hover:bg-gray-100 rounded px-1"
+            className="text-sm text-gray-700 dark:text-gray-300 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded px-1"
           >
             {data.scopePeriod}
           </span>
@@ -94,7 +94,7 @@ export default function Scope() {
               onClick={() => { setScopeDraft(data.scopeText); setEditingScope(true); }}
               className="cursor-pointer rounded px-2 py-1 text-sm text-gray-700 hover:bg-gray-50 whitespace-pre-wrap break-all"
             >
-              {data.scopeText || <span className="text-gray-400 italic">Click to add scope...</span>}
+              {data.scopeText || <span className="text-gray-500 dark:text-gray-400 italic">Click to add scope...</span>}
             </div>
           )}
         </div>

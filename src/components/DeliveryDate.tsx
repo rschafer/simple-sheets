@@ -7,7 +7,7 @@ export default function DeliveryDate() {
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-gray-500">Target:</span>
+      <span className="text-sm text-gray-700 dark:text-gray-300">Target:</span>
       <input
         type="date"
         value={data.deliveryDate}

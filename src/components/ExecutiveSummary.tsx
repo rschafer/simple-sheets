@@ -60,7 +60,7 @@ function SummaryBullets({ text }: { text: string }) {
   if (bullets.length === 0) return null;
 
   return (
-    <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
+    <ul className="list-disc list-inside text-sm text-gray-800 dark:text-gray-200 space-y-1">
       {bullets.map((bullet, i) => (
         <li key={i}>{bullet}</li>
       ))}
@@ -240,7 +240,7 @@ export default function ExecutiveSummary() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-700">Executive Summary</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Executive Summary</h2>
         <div className="flex gap-2">
           {data.executiveSummaries.length > 0 && (
             <select
@@ -351,7 +351,7 @@ export default function ExecutiveSummary() {
         <div className="space-y-4">
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-sm font-medium text-gray-600">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 {template.labels.recentProgress}
               </label>
               <div className="flex items-center gap-2">
@@ -378,7 +378,7 @@ export default function ExecutiveSummary() {
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-sm font-medium text-gray-600">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 {template.labels.nextSteps}
               </label>
               <div className="flex items-center gap-2">
@@ -404,7 +404,7 @@ export default function ExecutiveSummary() {
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-sm font-medium text-gray-600">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 {template.labels.risksAndMitigation}
               </label>
               <div className="flex items-center gap-2">
@@ -431,7 +431,7 @@ export default function ExecutiveSummary() {
           {template.labels.impactToOtherPrograms && (
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-sm font-medium text-gray-600">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   {template.labels.impactToOtherPrograms}
                 </label>
                 <div className="flex items-center gap-2">
@@ -485,28 +485,28 @@ export default function ExecutiveSummary() {
         </div>
       ) : displaySummary ? (
         <div className="space-y-4">
-          <p className="text-xs text-gray-400">{formatDate(displaySummary.date)}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{formatDate(displaySummary.date)}</p>
           <div>
-            <h3 className="text-sm font-semibold text-gray-600 mb-1">{template.labels.recentProgress}</h3>
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">{template.labels.recentProgress}</h3>
             <SummaryBullets text={displaySummary.recentProgress} />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-600 mb-1">{template.labels.nextSteps}</h3>
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">{template.labels.nextSteps}</h3>
             <SummaryBullets text={displaySummary.nextSteps} />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-600 mb-1">{template.labels.risksAndMitigation}</h3>
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">{template.labels.risksAndMitigation}</h3>
             <SummaryBullets text={displaySummary.risksAndMitigation} />
           </div>
           {displaySummary.impactToOtherPrograms && (
             <div>
-              <h3 className="text-sm font-semibold text-gray-600 mb-1">{template.labels.impactToOtherPrograms}</h3>
+              <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">{template.labels.impactToOtherPrograms}</h3>
               <SummaryBullets text={displaySummary.impactToOtherPrograms} />
             </div>
           )}
         </div>
       ) : (
-        <p className="text-gray-400 text-sm italic">
+        <p className="text-gray-500 dark:text-gray-400 text-sm italic">
           No summaries yet. Click &quot;+ New Entry&quot; to create your first weekly update.
         </p>
       )}

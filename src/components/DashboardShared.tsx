@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigation, Program, ProductArea } from "@/context/NavigationContext";
 import { HealthStatus, ProjectPhase } from "@/context/DashboardContext";
 
@@ -487,21 +487,115 @@ export function KpiCards({ programs }: { programs: { program: Program; productAr
   );
 }
 
+// --- Column Filter Dropdown ---
+function ColumnFilterDropdown({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: { value: string; label: string }[];
+  onChange: (v: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const isFiltered = value !== "all";
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative inline-flex items-center gap-1">
+      <span>{label}</span>
+      <button
+        onClick={(e) => { e.stopPropagation(); setOpen(!open); }}
+        className={`inline-flex items-center p-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-600 ${isFiltered ? "text-blue-600 dark:text-blue-400" : "text-gray-400 dark:text-gray-500"}`}
+        title={`Filter ${label}`}
+      >
+        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 01.707 1.707L11 10.414V17a1 1 0 01-1.447.894l-2-1A1 1 0 017 16v-5.586L1.293 3.707A1 1 0 013 3z" clipRule="evenodd" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 mt-1 w-36 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 py-1">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={(e) => { e.stopPropagation(); onChange(opt.value); setOpen(false); }}
+              className={`w-full text-left px-3 py-1.5 text-xs normal-case tracking-normal hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                value === opt.value ? "text-blue-600 dark:text-blue-400 font-medium" : "text-gray-700 dark:text-gray-300"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // --- Programs Table ---
 export function ProgramsTable({
   programs,
   showProductArea = true,
   totalCount,
+  healthFilter,
+  setHealthFilter,
+  phaseFilter,
+  setPhaseFilter,
+  deliveryFilter,
+  setDeliveryFilter,
 }: {
   programs: { program: Program; productArea: ProductArea }[];
   showProductArea?: boolean;
   totalCount: number;
+  healthFilter?: HealthStatus | "all";
+  setHealthFilter?: (v: HealthStatus | "all") => void;
+  phaseFilter?: ProjectPhase | "all";
+  setPhaseFilter?: (v: ProjectPhase | "all") => void;
+  deliveryFilter?: DeliveryFilter;
+  setDeliveryFilter?: (v: DeliveryFilter) => void;
 }) {
   const { setCurrentView } = useNavigation();
 
+  const healthOptions = [
+    { value: "all", label: "All Health" },
+    { value: "green", label: "On Track" },
+    { value: "yellow", label: "At Risk" },
+    { value: "red", label: "Off Track" },
+  ];
+
+  const phaseOptions = [
+    { value: "all", label: "All Phases" },
+    { value: "Discovery", label: "Discovery" },
+    { value: "Planning", label: "Planning" },
+    { value: "Execution", label: "Execution" },
+  ];
+
+  const deliveryOptions = [
+    { value: "all", label: "All Dates" },
+    { value: "this-quarter", label: "This Quarter" },
+    { value: "next-quarter", label: "Next Quarter" },
+    { value: "overdue", label: "Overdue" },
+    { value: "no-date", label: "No Date Set" },
+  ];
+
+  const hasFilters =
+    (healthFilter && healthFilter !== "all") ||
+    (phaseFilter && phaseFilter !== "all") ||
+    (deliveryFilter && deliveryFilter !== "all");
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-      <div className="px-4 py-3 border-b">
+      <div className="px-4 py-3 border-b flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
           Programs
           {programs.length !== totalCount && (
@@ -510,6 +604,14 @@ export function ProgramsTable({
             </span>
           )}
         </h2>
+        {hasFilters && setHealthFilter && setPhaseFilter && setDeliveryFilter && (
+          <button
+            onClick={() => { setHealthFilter("all"); setPhaseFilter("all"); setDeliveryFilter("all"); }}
+            className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            Clear filters
+          </button>
+        )}
       </div>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -517,10 +619,37 @@ export function ProgramsTable({
             <tr className="border-b border-gray-200 dark:border-gray-700 text-left text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               <th className="px-4 py-3">Program</th>
               {showProductArea && <th className="px-4 py-3">Product Area</th>}
-              <th className="px-4 py-3">Health</th>
+              <th className="px-4 py-3">
+                {setHealthFilter ? (
+                  <ColumnFilterDropdown
+                    label="Health"
+                    value={healthFilter || "all"}
+                    options={healthOptions}
+                    onChange={(v) => setHealthFilter(v as HealthStatus | "all")}
+                  />
+                ) : "Health"}
+              </th>
               <th className="px-4 py-3">Trend</th>
-              <th className="px-4 py-3">Phase</th>
-              <th className="px-4 py-3">Delivery Date</th>
+              <th className="px-4 py-3">
+                {setPhaseFilter ? (
+                  <ColumnFilterDropdown
+                    label="Phase"
+                    value={phaseFilter || "all"}
+                    options={phaseOptions}
+                    onChange={(v) => setPhaseFilter(v as ProjectPhase | "all")}
+                  />
+                ) : "Phase"}
+              </th>
+              <th className="px-4 py-3">
+                {setDeliveryFilter ? (
+                  <ColumnFilterDropdown
+                    label="Delivery"
+                    value={deliveryFilter || "all"}
+                    options={deliveryOptions}
+                    onChange={(v) => setDeliveryFilter(v as DeliveryFilter)}
+                  />
+                ) : "Delivery Date"}
+              </th>
               <th className="px-4 py-3">RAID</th>
               <th className="px-4 py-3">Milestones</th>
             </tr>

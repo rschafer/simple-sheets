@@ -73,11 +73,11 @@ export default function RaidLog() {
       <div className="flex items-center justify-between mb-3">
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="flex items-center gap-2 text-lg font-semibold text-gray-700"
+          className="flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100"
         >
           <span className={`transition-transform ${collapsed ? "" : "rotate-90"}`}>{"\u25B6"}</span>
           RAID Log
-          <span className="text-xs text-gray-400 font-normal">({data.raidItems.length} items)</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400 font-normal">({data.raidItems.length} items)</span>
         </button>
         <button onClick={addItem} className="text-sm text-blue-600 hover:text-blue-800 font-medium">
           + Add Item
@@ -99,12 +99,12 @@ export default function RaidLog() {
           </div>
 
           {sorted.length === 0 ? (
-            <p className="text-gray-400 text-sm italic">No RAID items. Click &quot;+ Add Item&quot; to get started.</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm italic">No RAID items. Click &quot;+ Add Item&quot; to get started.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-xs text-gray-500 uppercase tracking-wider">
+                  <tr className="border-b text-left text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                     <th className="pb-2 pr-3 min-w-[250px] cursor-pointer" onClick={() => toggleSort("summary")}>
                       Summary<SortIcon field="summary" />
                     </th>

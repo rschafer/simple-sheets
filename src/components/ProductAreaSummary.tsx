@@ -6,7 +6,6 @@ import { HealthStatus, ProjectPhase } from "@/context/DashboardContext";
 import {
   DonutChart,
   NeedsAttention,
-  FilterBar,
   KpiCards,
   ProgramsTable,
   TimelineBar,
@@ -74,23 +73,17 @@ export default function ProductAreaSummary() {
         {/* Needs Attention */}
         <NeedsAttention allPrograms={allPrograms} showProductArea={false} />
 
-        {/* Filters */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4">
-          <FilterBar
-            healthFilter={healthFilter}
-            setHealthFilter={setHealthFilter}
-            phaseFilter={phaseFilter}
-            setPhaseFilter={setPhaseFilter}
-            deliveryFilter={deliveryFilter}
-            setDeliveryFilter={setDeliveryFilter}
-          />
-        </div>
-
-        {/* Programs Table */}
+        {/* Programs Table with inline column filters */}
         <ProgramsTable
           programs={filteredPrograms}
           showProductArea={false}
           totalCount={allPrograms.length}
+          healthFilter={healthFilter}
+          setHealthFilter={setHealthFilter}
+          phaseFilter={phaseFilter}
+          setPhaseFilter={setPhaseFilter}
+          deliveryFilter={deliveryFilter}
+          setDeliveryFilter={setDeliveryFilter}
         />
 
         {/* Timeline */}

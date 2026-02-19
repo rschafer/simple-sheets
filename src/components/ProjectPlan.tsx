@@ -68,11 +68,11 @@ export default function ProjectPlan() {
       <div className="flex items-center justify-between mb-3">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-2 text-lg font-semibold text-gray-700"
+          className="flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100"
         >
           <span className={`transition-transform ${expanded ? "rotate-90" : ""}`}>{"\u25B6"}</span>
           Project Plan
-          <span className="text-xs text-gray-400 font-normal">({data.projectPlan.length} tasks)</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400 font-normal">({data.projectPlan.length} tasks)</span>
         </button>
         {expanded && (
           <div className="flex gap-2">
@@ -91,12 +91,12 @@ export default function ProjectPlan() {
       {expanded && (
         <>
           {data.projectPlan.length === 0 ? (
-            <p className="text-gray-400 text-sm italic">No tasks yet. Load a template or add tasks manually.</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm italic">No tasks yet. Load a template or add tasks manually.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left text-xs text-gray-500 uppercase tracking-wider">
+                  <tr className="border-b text-left text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                     <th className="pb-2 pr-3 min-w-[250px]">Task</th>
                     <th className="pb-2 pr-3 w-28">Assignee</th>
                     <th className="pb-2 pr-3 w-28">Status</th>
@@ -116,7 +116,7 @@ export default function ProjectPlan() {
                             value={row.task}
                             onChange={(e) => updateRow(row.id, { task: e.target.value })}
                             placeholder="Task name"
-                            className={`w-full bg-transparent border-0 outline-none placeholder-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-300 rounded px-1 ${
+                            className={`w-full bg-transparent border-0 outline-none placeholder-gray-400 focus:bg-white focus:ring-1 focus:ring-blue-300 rounded px-1 ${
                               row.indent === 0 ? "font-semibold text-gray-900" : "text-gray-700"
                             }`}
                           />
@@ -127,7 +127,7 @@ export default function ProjectPlan() {
                           value={row.assignee}
                           onChange={(e) => updateRow(row.id, { assignee: e.target.value })}
                           placeholder="Name"
-                          className="w-full bg-transparent border-0 outline-none text-gray-700 placeholder-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-300 rounded px-1 text-xs"
+                          className="w-full bg-transparent border-0 outline-none text-gray-700 placeholder-gray-400 focus:bg-white focus:ring-1 focus:ring-blue-300 rounded px-1 text-xs"
                         />
                       </td>
                       <td className="py-1.5 pr-3">
@@ -160,7 +160,7 @@ export default function ProjectPlan() {
                           value={row.dependencies || ""}
                           onChange={(e) => updateRow(row.id, { dependencies: e.target.value })}
                           placeholder="Dependencies"
-                          className="w-full bg-transparent border-0 outline-none text-gray-700 placeholder-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-300 rounded px-1 text-xs"
+                          className="w-full bg-transparent border-0 outline-none text-gray-700 placeholder-gray-400 focus:bg-white focus:ring-1 focus:ring-blue-300 rounded px-1 text-xs"
                         />
                       </td>
                       <td className="py-1.5 pr-3">
@@ -168,7 +168,7 @@ export default function ProjectPlan() {
                           value={row.notes}
                           onChange={(e) => updateRow(row.id, { notes: e.target.value })}
                           placeholder="Notes"
-                          className="w-full bg-transparent border-0 outline-none text-gray-700 placeholder-gray-300 focus:bg-white focus:ring-1 focus:ring-blue-300 rounded px-1 text-xs"
+                          className="w-full bg-transparent border-0 outline-none text-gray-700 placeholder-gray-400 focus:bg-white focus:ring-1 focus:ring-blue-300 rounded px-1 text-xs"
                         />
                       </td>
                       <td className="py-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

@@ -14,13 +14,67 @@ const healthColors: Record<HealthStatus, string> = {
   red: "bg-red-500",
 };
 
+function VerticalDots() {
+  return (
+    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+      <circle cx="10" cy="4" r="1.5" />
+      <circle cx="10" cy="10" r="1.5" />
+      <circle cx="10" cy="16" r="1.5" />
+    </svg>
+  );
+}
+
+function ContextMenu({
+  items,
+  onClose,
+}: {
+  items: { label: string; onClick: () => void; danger?: boolean }[];
+  onClose: () => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [onClose]);
+
+  return (
+    <div
+      ref={ref}
+      className="absolute right-0 top-full mt-1 w-44 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 py-1"
+    >
+      {items.map((item) => (
+        <button
+          key={item.label}
+          onClick={() => {
+            item.onClick();
+            onClose();
+          }}
+          className={`w-full text-left px-3 py-1.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 ${
+            item.danger
+              ? "text-red-600 dark:text-red-400"
+              : "text-gray-700 dark:text-gray-300"
+          }`}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function HealthDot({ status }: { status: HealthStatus }) {
   return <span className={`inline-block w-2 h-2 rounded-full ${healthColors[status]}`} />;
 }
 
 function ProductAreaSection({ productArea, collapsed }: { productArea: ProductArea; collapsed: boolean }) {
-  const { currentView, setCurrentView } = useNavigation();
+  const { currentView, setCurrentView, addProgram, deleteProgram } = useNavigation();
   const [expanded, setExpanded] = useState(true);
+  const [paMenuOpen, setPaMenuOpen] = useState(false);
+  const [programMenuOpen, setProgramMenuOpen] = useState<string | null>(null);
 
   const isProductAreaActive =
     currentView.type === "product-area" && currentView.productAreaId === productArea.id;
@@ -46,7 +100,7 @@ function ProductAreaSection({ productArea, collapsed }: { productArea: ProductAr
 
   return (
     <div className="mb-2">
-      <div className="flex items-center">
+      <div className="group flex items-center">
         <button
           onClick={() => setExpanded(!expanded)}
           className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
@@ -63,6 +117,32 @@ function ProductAreaSection({ productArea, collapsed }: { productArea: ProductAr
         >
           {productArea.name}
         </button>
+        <div className="relative">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setPaMenuOpen(!paMenuOpen);
+            }}
+            className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+            title="More options"
+          >
+            <VerticalDots />
+          </button>
+          {paMenuOpen && (
+            <ContextMenu
+              items={[
+                {
+                  label: "Add New Program",
+                  onClick: () => {
+                    const name = prompt("Program name:");
+                    if (name?.trim()) addProgram(productArea.id, name.trim());
+                  },
+                },
+              ]}
+              onClose={() => setPaMenuOpen(false)}
+            />
+          )}
+        </div>
       </div>
 
       {expanded && (
@@ -74,22 +154,51 @@ function ProductAreaSection({ productArea, collapsed }: { productArea: ProductAr
               currentView.programId === program.id;
 
             return (
-              <button
-                key={program.id}
-                onClick={() =>
-                  setCurrentView({
-                    type: "program",
-                    productAreaId: productArea.id,
-                    programId: program.id,
-                  })
-                }
-                className={`w-full flex items-center gap-2 px-2 py-1 text-sm rounded hover:bg-gray-100 dark:hover:bg-gray-800 ${
-                  isActive ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
-                }`}
-              >
-                <HealthDot status={program.healthStatus} />
-                <span className="truncate">{program.name}</span>
-              </button>
+              <div key={program.id} className="group/prog flex items-center relative">
+                <button
+                  onClick={() =>
+                    setCurrentView({
+                      type: "program",
+                      productAreaId: productArea.id,
+                      programId: program.id,
+                    })
+                  }
+                  className={`flex-1 flex items-center gap-2 px-2 py-1 text-sm rounded hover:bg-gray-100 dark:hover:bg-gray-800 ${
+                    isActive ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" : "text-gray-600 dark:text-gray-400"
+                  }`}
+                >
+                  <HealthDot status={program.healthStatus} />
+                  <span className="truncate">{program.name}</span>
+                </button>
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setProgramMenuOpen(programMenuOpen === program.id ? null : program.id);
+                    }}
+                    className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover/prog:opacity-100 transition-opacity rounded hover:bg-gray-100 dark:hover:bg-gray-800"
+                    title="More options"
+                  >
+                    <VerticalDots />
+                  </button>
+                  {programMenuOpen === program.id && (
+                    <ContextMenu
+                      items={[
+                        {
+                          label: "Delete",
+                          danger: true,
+                          onClick: () => {
+                            if (confirm(`Delete "${program.name}"?`)) {
+                              deleteProgram(productArea.id, program.id);
+                            }
+                          },
+                        },
+                      ]}
+                      onClose={() => setProgramMenuOpen(null)}
+                    />
+                  )}
+                </div>
+              </div>
             );
           })}
         </div>

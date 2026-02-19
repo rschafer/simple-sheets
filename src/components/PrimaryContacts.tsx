@@ -47,11 +47,11 @@ export default function PrimaryContacts() {
       <div className="flex items-center justify-between">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+          className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
         >
           <span className={`transition-transform text-xs ${expanded ? "rotate-90" : ""}`}>&#9654;</span>
           Contacts
-          <span className="text-xs text-gray-400 font-normal">({data.contacts.length})</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400 font-normal">({data.contacts.length})</span>
         </button>
         {expanded && (
           <button onClick={addContact} className="text-sm text-blue-600 hover:text-blue-800 font-medium">
@@ -63,7 +63,7 @@ export default function PrimaryContacts() {
       {expanded && (
         <div className="mt-3">
           {data.contacts.length === 0 ? (
-            <p className="text-gray-400 text-sm italic">No contacts added yet. Click &quot;+ Add Contact&quot; to get started.</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm italic">No contacts added yet. Click &quot;+ Add Contact&quot; to get started.</p>
           ) : (
             <ul className="space-y-2">
               {data.contacts.map((contact) =>
@@ -99,12 +99,12 @@ export default function PrimaryContacts() {
                   </li>
                 ) : (
                   <li key={contact.id} className="flex items-center gap-2 group">
-                    <span className="text-sm font-medium text-gray-500 w-40 truncate">{contact.role}</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 w-40 truncate">{contact.role}</span>
                     <span
                       className="text-sm text-gray-900 cursor-pointer hover:bg-gray-100 rounded px-1 flex-1 truncate"
                       onClick={() => startEdit(contact)}
                     >
-                      {contact.name || <span className="text-gray-300 italic">Click to add name</span>}
+                      {contact.name || <span className="text-gray-400 dark:text-gray-500 italic">Click to add name</span>}
                     </span>
                     <div className="ml-auto flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button onClick={() => startEdit(contact)} className="text-xs text-gray-400 hover:text-gray-600">

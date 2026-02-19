@@ -47,11 +47,11 @@ export default function KeyLinks() {
       <div className="flex items-center justify-between">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+          className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
         >
           <span className={`transition-transform text-xs ${expanded ? "rotate-90" : ""}`}>&#9654;</span>
           Key Links
-          <span className="text-xs text-gray-400 font-normal">({data.keyLinks.length})</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400 font-normal">({data.keyLinks.length})</span>
         </button>
         {expanded && (
           <button
@@ -66,7 +66,7 @@ export default function KeyLinks() {
       {expanded && (
         <div className="mt-3">
           {data.keyLinks.length === 0 ? (
-            <p className="text-gray-400 text-sm italic">No links added yet. Click &quot;+ Add Link&quot; to get started.</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm italic">No links added yet. Click &quot;+ Add Link&quot; to get started.</p>
           ) : (
             <ul className="space-y-2">
               {data.keyLinks.map((link) =>
@@ -116,7 +116,7 @@ export default function KeyLinks() {
                     >
                       {link.label}
                     </a>
-                    <span className="text-gray-300 text-xs truncate hidden sm:inline">
+                    <span className="text-gray-400 dark:text-gray-500 text-xs truncate hidden sm:inline">
                       {link.url}
                     </span>
                     <div className="ml-auto flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
