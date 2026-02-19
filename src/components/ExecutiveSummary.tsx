@@ -145,10 +145,7 @@ export default function ExecutiveSummary() {
   const { getCurrentProductArea, isAdmin, updateProductAreaTemplate } = useNavigation();
   const [editing, setEditing] = useState(false);
   const [viewingHistoryId, setViewingHistoryId] = useState<string | null>(null);
-  const [showAiModal, setShowAiModal] = useState(false);
   const [showTemplateEditor, setShowTemplateEditor] = useState(false);
-  const [aiStartDate, setAiStartDate] = useState("");
-  const [aiEndDate, setAiEndDate] = useState("");
   const [generating, setGenerating] = useState(false);
 
   const currentPA = getCurrentProductArea();
@@ -173,9 +170,13 @@ export default function ExecutiveSummary() {
   };
 
   const generateAiSummary = async () => {
-    if (!aiStartDate || !aiEndDate) return;
-
     setGenerating(true);
+
+    const latestDate = data.executiveSummaries[0]?.date;
+    const startDate = latestDate
+      ? new Date(latestDate).toISOString().split("T")[0]
+      : "";
+    const endDate = new Date().toISOString().split("T")[0];
 
     try {
       const response = await fetch("/api/generate-summary", {
@@ -186,8 +187,8 @@ export default function ExecutiveSummary() {
           projectPlan: data.projectPlan,
           raidItems: data.raidItems,
           milestones: data.milestones,
-          startDate: aiStartDate,
-          endDate: aiEndDate,
+          startDate,
+          endDate,
         }),
       });
 
@@ -204,7 +205,6 @@ export default function ExecutiveSummary() {
         impactToOtherPrograms: result.summary.impactToOtherPrograms,
       });
 
-      setShowAiModal(false);
       setEditing(true);
     } catch (error) {
       console.error("AI generation error:", error);
@@ -266,14 +266,15 @@ export default function ExecutiveSummary() {
           )}
           <div className="flex items-center gap-1">
             <button
-              onClick={() => setShowAiModal(true)}
-              className="text-sm text-purple-600 hover:text-purple-800 font-medium"
+              onClick={generateAiSummary}
+              disabled={generating}
+              className="text-sm text-purple-600 hover:text-purple-800 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
             >
-              Generate with AI
+              {generating ? "Generating..." : "Generate with AI"}
             </button>
             <span
               className="text-gray-400 hover:text-gray-600 cursor-help"
-              title="Uses Claude AI (Anthropic) to analyze your project plan, milestones, and RAID log to generate a natural language executive summary."
+              title="Uses Claude AI to analyze your project plan, milestones, and RAID log to generate a summary covering the period from your last update to today."
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -296,55 +297,6 @@ export default function ExecutiveSummary() {
           onSave={handleSaveTemplate}
           onClose={() => setShowTemplateEditor(false)}
         />
-      )}
-
-      {/* AI Generation Modal */}
-      {showAiModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/30" onClick={() => setShowAiModal(false)} />
-          <div className="relative bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Generate Summary with AI</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Select a date range to generate a summary based on your project plan and RAID log.
-            </p>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">Start Date</label>
-                <input
-                  type="date"
-                  value={aiStartDate}
-                  onChange={(e) => setAiStartDate(e.target.value)}
-                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-600 mb-1">End Date</label>
-                <input
-                  type="date"
-                  value={aiEndDate}
-                  onChange={(e) => setAiEndDate(e.target.value)}
-                  className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-                />
-              </div>
-              <div className="flex gap-2 pt-2">
-                <button
-                  onClick={generateAiSummary}
-                  disabled={!aiStartDate || !aiEndDate || generating}
-                  className="flex-1 rounded bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                >
-                  {generating ? "Generating..." : "Generate"}
-                </button>
-                <button
-                  onClick={() => setShowAiModal(false)}
-                  className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-              </div>
-              <p className="text-xs text-gray-400 mt-3">Powered by Claude AI (Anthropic)</p>
-            </div>
-          </div>
-        </div>
       )}
 
       {editing ? (
