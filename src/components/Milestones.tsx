@@ -23,6 +23,7 @@ function formatShortDate(iso: string) {
 
 export default function Milestones() {
   const { data, updateData } = useDashboard();
+  const [expanded, setExpanded] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState<Milestone | null>(null);
 
@@ -75,18 +76,24 @@ export default function Milestones() {
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide"
+        >
+          <span className={`transition-transform text-xs ${expanded ? "rotate-90" : ""}`}>{"\u25B6"}</span>
           Milestones
-          <span className="text-xs font-normal text-gray-500 dark:text-gray-400 ml-1 normal-case tracking-normal">
+          <span className="text-xs font-normal text-gray-500 dark:text-gray-400 normal-case tracking-normal">
             ({data.milestones.length})
           </span>
-        </h2>
-        <button onClick={addMilestone} className="text-xs text-blue-600 hover:text-blue-800 font-medium">
-          + Add
         </button>
+        {expanded && (
+          <button onClick={addMilestone} className="text-xs text-blue-600 hover:text-blue-800 font-medium">
+            + Add
+          </button>
+        )}
       </div>
 
-      {data.milestones.length === 0 ? (
+      {expanded && (data.milestones.length === 0 ? (
         <p className="text-gray-500 dark:text-gray-400 text-xs italic">No milestones yet.</p>
       ) : (
         <div className="space-y-1.5">
@@ -163,7 +170,7 @@ export default function Milestones() {
             </div>
           ))}
         </div>
-      )}
+      ))}
     </div>
   );
 }

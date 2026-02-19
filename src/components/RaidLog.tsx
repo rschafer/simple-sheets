@@ -30,6 +30,7 @@ const statusColors: Record<RaidStatus, string> = {
 
 export default function RaidLog() {
   const { data, updateData } = useDashboard();
+  const [expanded, setExpanded] = useState(true);
   const [panelItem, setPanelItem] = useState<RaidItem | null>(null);
   const [draft, setDraft] = useState<RaidItem | null>(null);
   const [filterType, setFilterType] = useState<RaidType | "">("");
@@ -82,28 +83,34 @@ export default function RaidLog() {
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide"
+        >
+          <span className={`transition-transform text-xs ${expanded ? "rotate-90" : ""}`}>{"\u25B6"}</span>
           RAID
-          <span className="text-xs font-normal text-gray-500 dark:text-gray-400 ml-1 normal-case tracking-normal">
+          <span className="text-xs font-normal text-gray-500 dark:text-gray-400 normal-case tracking-normal">
             ({openCount} open)
           </span>
-        </h2>
-        <div className="flex items-center gap-2">
-          <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value as RaidType | "")}
-            className="rounded border border-gray-300 dark:border-gray-600 px-1.5 py-0.5 text-[10px] dark:bg-gray-700 dark:text-gray-200"
-          >
-            <option value="">All</option>
-            {raidTypes.map((t) => <option key={t} value={t}>{t}</option>)}
-          </select>
-          <button onClick={addItem} className="text-xs text-blue-600 hover:text-blue-800 font-medium">
-            + Add
-          </button>
-        </div>
+        </button>
+        {expanded && (
+          <div className="flex items-center gap-2">
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value as RaidType | "")}
+              className="rounded border border-gray-300 dark:border-gray-600 px-1.5 py-0.5 text-[10px] dark:bg-gray-700 dark:text-gray-200"
+            >
+              <option value="">All</option>
+              {raidTypes.map((t) => <option key={t} value={t}>{t}</option>)}
+            </select>
+            <button onClick={addItem} className="text-xs text-blue-600 hover:text-blue-800 font-medium">
+              + Add
+            </button>
+          </div>
+        )}
       </div>
 
-      {filtered.length === 0 ? (
+      {expanded && (filtered.length === 0 ? (
         <p className="text-gray-500 dark:text-gray-400 text-xs italic">No RAID items.</p>
       ) : (
         <div className="space-y-1.5">
@@ -146,7 +153,7 @@ export default function RaidLog() {
             </div>
           ))}
         </div>
-      )}
+      ))}
 
       {/* Side Panel */}
       {panelItem && draft && (

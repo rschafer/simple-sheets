@@ -143,6 +143,7 @@ function TemplateEditorModal({
 export default function ExecutiveSummary() {
   const { data, updateData } = useDashboard();
   const { getCurrentProductArea, isAdmin, updateProductAreaTemplate } = useNavigation();
+  const [expanded, setExpanded] = useState(true);
   const [editing, setEditing] = useState(false);
   const [viewingHistoryId, setViewingHistoryId] = useState<string | null>(null);
   const [showTemplateEditor, setShowTemplateEditor] = useState(false);
@@ -240,56 +241,64 @@ export default function ExecutiveSummary() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Executive Summary</h2>
-        <div className="flex gap-2">
-          {data.executiveSummaries.length > 0 && (
-            <select
-              value={viewingHistoryId || ""}
-              onChange={(e) => setViewingHistoryId(e.target.value || null)}
-              className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600"
-            >
-              <option value="">Latest</option>
-              {data.executiveSummaries.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {formatDate(s.date)}
-                </option>
-              ))}
-            </select>
-          )}
-          {isAdmin && (
-            <button
-              onClick={() => setShowTemplateEditor(true)}
-              className="text-sm text-gray-500 hover:text-gray-700 font-medium"
-            >
-              Edit Template
-            </button>
-          )}
-          <div className="flex items-center gap-1">
-            <button
-              onClick={generateAiSummary}
-              disabled={generating}
-              className="text-sm text-purple-600 hover:text-purple-800 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
-            >
-              {generating ? "Generating..." : "Generate with AI"}
-            </button>
-            <span className="relative group">
-              <span className="text-gray-400 hover:text-gray-600 cursor-help">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide"
+        >
+          <span className={`transition-transform text-xs ${expanded ? "rotate-90" : ""}`}>{"\u25B6"}</span>
+          Executive Summary
+        </button>
+        {expanded && (
+          <div className="flex gap-2">
+            {data.executiveSummaries.length > 0 && (
+              <select
+                value={viewingHistoryId || ""}
+                onChange={(e) => setViewingHistoryId(e.target.value || null)}
+                className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600"
+              >
+                <option value="">Latest</option>
+                {data.executiveSummaries.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {formatDate(s.date)}
+                  </option>
+                ))}
+              </select>
+            )}
+            {isAdmin && (
+              <button
+                onClick={() => setShowTemplateEditor(true)}
+                className="text-sm text-gray-500 hover:text-gray-700 font-medium"
+              >
+                Edit Template
+              </button>
+            )}
+            <div className="flex items-center gap-1">
+              <button
+                onClick={generateAiSummary}
+                disabled={generating}
+                className="text-sm text-purple-600 hover:text-purple-800 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
+              >
+                {generating ? "Generating..." : "Generate with AI"}
+              </button>
+              <span className="relative group">
+                <span className="text-gray-400 hover:text-gray-600 cursor-help">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </span>
+                <span className="absolute bottom-full right-0 mb-2 w-64 rounded bg-gray-800 px-3 py-2 text-xs text-white shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50">
+                  Uses AI to analyze your project plan, milestones, and RAID log to generate a summary from your last update to today.
+                </span>
               </span>
-              <span className="absolute bottom-full right-0 mb-2 w-64 rounded bg-gray-800 px-3 py-2 text-xs text-white shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50">
-                Uses AI to analyze your project plan, milestones, and RAID log to generate a summary from your last update to today.
-              </span>
-            </span>
+            </div>
+            <button
+              onClick={startNewEntry}
+              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+            >
+              + New Entry
+            </button>
           </div>
-          <button
-            onClick={startNewEntry}
-            className="text-sm text-blue-600 hover:text-blue-800 font-medium"
-          >
-            + New Entry
-          </button>
-        </div>
+        )}
       </div>
 
       {/* Template Editor Modal (Admin only) */}
@@ -301,7 +310,7 @@ export default function ExecutiveSummary() {
         />
       )}
 
-      {editing ? (
+      {expanded && (editing ? (
         <div className="space-y-4">
           <div>
             <div className="flex items-center justify-between mb-1">
@@ -463,7 +472,7 @@ export default function ExecutiveSummary() {
         <p className="text-gray-500 dark:text-gray-400 text-sm italic">
           No summaries yet. Click &quot;+ New Entry&quot; to create your first weekly update.
         </p>
-      )}
+      ))}
     </div>
   );
 }
