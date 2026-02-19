@@ -326,7 +326,7 @@ export default function Sidebar() {
     <aside
       ref={sidebarRef}
       style={{ width: `${width}px` }}
-      className="bg-slate-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 h-screen flex-shrink-0 relative flex flex-col"
+      className="bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 h-screen flex-shrink-0 relative flex flex-col"
     >
       <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         {!collapsed && <h1 className="text-lg font-bold text-gray-800 dark:text-gray-100 truncate">SimpleSheets</h1>}
