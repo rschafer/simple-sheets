@@ -101,10 +101,6 @@ function ProductAreaSection({ productArea, collapsed }: { productArea: ProductAr
 function SettingsPopover({ collapsed, onClose }: { collapsed: boolean; onClose: () => void }) {
   const { darkMode, setDarkMode, isAdmin, setIsAdmin } = useNavigation();
   const popoverRef = useRef<HTMLDivElement>(null);
-  const [compactMode, setCompactMode] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem("compact-mode") === "true";
-  });
   const [autoSave, setAutoSave] = useState(true);
 
   useEffect(() => {
@@ -116,11 +112,6 @@ function SettingsPopover({ collapsed, onClose }: { collapsed: boolean; onClose: 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [onClose]);
-
-  useEffect(() => {
-    localStorage.setItem("compact-mode", String(compactMode));
-    document.documentElement.classList.toggle("compact", compactMode);
-  }, [compactMode]);
 
   const Toggle = ({ enabled }: { enabled: boolean }) => (
     <span className={`w-9 h-[22px] rounded-full relative transition-colors duration-200 ${enabled ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"}`}>
@@ -153,19 +144,6 @@ function SettingsPopover({ collapsed, onClose }: { collapsed: boolean; onClose: 
           </span>
           <span className="flex-1 text-left font-medium">Dark Mode</span>
           <Toggle enabled={darkMode} />
-        </button>
-        {/* Compact Mode */}
-        <button
-          onClick={() => setCompactMode(!compactMode)}
-          className="w-full flex items-center gap-3 px-3 py-2.5 text-[13px] rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/60 text-gray-800 dark:text-gray-200 transition-colors"
-        >
-          <span className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center flex-shrink-0">
-            <svg className="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-            </svg>
-          </span>
-          <span className="flex-1 text-left font-medium">Compact Mode</span>
-          <Toggle enabled={compactMode} />
         </button>
         {/* Admin Mode */}
         <button

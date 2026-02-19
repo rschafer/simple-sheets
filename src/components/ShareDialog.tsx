@@ -43,9 +43,61 @@ export function ShareButton({ onClick }: { onClick: () => void }) {
   );
 }
 
+function useLocalShareState(storageKey: string) {
+  const [state, setState] = useState<{
+    sharedUsers: SharedUser[];
+    generalAccess: GeneralAccess;
+    linkAccessLevel: AccessLevel;
+  }>(() => {
+    if (typeof window === "undefined") return { sharedUsers: [], generalAccess: "restricted" as GeneralAccess, linkAccessLevel: "Viewer" as AccessLevel };
+    try {
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return {
+          sharedUsers: parsed.sharedUsers || [],
+          generalAccess: parsed.generalAccess || "restricted",
+          linkAccessLevel: parsed.linkAccessLevel || "Viewer",
+        };
+      }
+    } catch { /* ignore */ }
+    return { sharedUsers: [], generalAccess: "restricted" as GeneralAccess, linkAccessLevel: "Viewer" as AccessLevel };
+  });
+
+  const save = (next: typeof state) => {
+    setState(next);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch { /* ignore */ }
+  };
+
+  return {
+    ...state,
+    addUser: (user: SharedUser) => save({ ...state, sharedUsers: [...state.sharedUsers, user] }),
+    removeUser: (id: string) => save({ ...state, sharedUsers: state.sharedUsers.filter((u) => u.id !== id) }),
+    updateUserAccess: (id: string, level: AccessLevel) => save({ ...state, sharedUsers: state.sharedUsers.map((u) => (u.id === id ? { ...u, accessLevel: level } : u)) }),
+    setGeneralAccess: (access: GeneralAccess) => save({ ...state, generalAccess: access }),
+    setLinkAccessLevel: (level: AccessLevel) => save({ ...state, linkAccessLevel: level }),
+  };
+}
+
 export function ShareLinkButton({ title }: { title: string }) {
+  const storageKey = `share-${title.toLowerCase().replace(/\s+/g, "-")}`;
+  const share = useLocalShareState(storageKey);
   const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [showAccessDropdown, setShowAccessDropdown] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const handleAddUser = () => {
+    if (!inputValue.trim()) return;
+    const isEmail = inputValue.includes("@");
+    share.addUser({
+      id: generateId(),
+      email: isEmail ? inputValue.trim() : `${inputValue.trim().toLowerCase().replace(/\s+/g, ".")}@example.com`,
+      name: isEmail ? inputValue.split("@")[0] : inputValue.trim(),
+      accessLevel: "Viewer",
+    });
+    setInputValue("");
+  };
 
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -60,6 +112,7 @@ export function ShareLinkButton({ title }: { title: string }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} />
           <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+            {/* Header */}
             <div className="flex items-center justify-between px-6 pt-5 pb-0">
               <h2 className="text-xl font-normal text-gray-800">
                 Share &quot;{title}&quot;
@@ -74,21 +127,153 @@ export function ShareLinkButton({ title }: { title: string }) {
               </button>
             </div>
 
-            <div className="px-6 py-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
+            {/* Add people input */}
+            <div className="px-6 pt-4 pb-3">
+              <input
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAddUser()}
+                placeholder="Add people, groups, or email addresses"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+
+            {/* People with access */}
+            <div className="px-6 pt-2">
+              <p className="text-sm font-medium text-gray-700 mb-3">People with access</p>
+              <div className="max-h-48 overflow-y-auto space-y-1">
+                {/* Owner (you) */}
+                <div className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-medium">
+                      RS
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-800">Robert Schafer (you)</p>
+                      <p className="text-xs text-gray-500">rdschafer2010@gmail.com</p>
+                    </div>
+                  </div>
+                  <span className="text-sm text-gray-500">Owner</span>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-800">Restricted</p>
-                  <p className="text-xs text-gray-500">Only people with access can open</p>
-                </div>
+
+                {/* Shared users */}
+                {share.sharedUsers.map((user) => (
+                  <div key={user.id} className="flex items-center justify-between py-2">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-full ${getAvatarColor(user.name)} flex items-center justify-center text-white text-xs font-medium`}>
+                        {getInitials(user.name)}
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-800">{user.name}</p>
+                        <p className="text-xs text-gray-500">{user.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <select
+                        value={user.accessLevel}
+                        onChange={(e) => share.updateUserAccess(user.id, e.target.value as AccessLevel)}
+                        className="text-sm text-gray-600 bg-transparent border-0 cursor-pointer hover:bg-gray-100 rounded px-2 py-1 focus:outline-none focus:ring-0 appearance-none"
+                        style={{ WebkitAppearance: "none" }}
+                      >
+                        {accessLevels.map((l) => (
+                          <option key={l} value={l}>{l}</option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={() => share.removeUser(user.id)}
+                        className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+                        title="Remove"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="flex items-center justify-between px-6 py-4 border-t">
+            {/* General access */}
+            <div className="px-6 pt-4 pb-2 border-t mt-3">
+              <p className="text-sm font-medium text-gray-700 mb-3">General access</p>
+              <div className="flex items-center justify-between relative">
+                <div className="flex items-center gap-3">
+                  {share.generalAccess === "restricted" ? (
+                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                  )}
+                  <div>
+                    <button
+                      onClick={() => setShowAccessDropdown(!showAccessDropdown)}
+                      className="flex items-center gap-1 text-sm text-gray-800 hover:bg-gray-100 rounded px-1 py-0.5"
+                    >
+                      {share.generalAccess === "restricted" ? "Restricted" : "Anyone with the link"}
+                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    <p className="text-xs text-gray-500 ml-1">
+                      {share.generalAccess === "restricted"
+                        ? "Only people with access can open"
+                        : `Anyone with the link can ${share.linkAccessLevel === "Viewer" ? "view" : share.linkAccessLevel === "Editor" ? "edit" : "comment"}`}
+                    </p>
+                  </div>
+                </div>
+
+                {share.generalAccess === "anyone-with-link" && (
+                  <select
+                    value={share.linkAccessLevel}
+                    onChange={(e) => share.setLinkAccessLevel(e.target.value as AccessLevel)}
+                    className="text-sm text-gray-600 bg-transparent border-0 cursor-pointer hover:bg-gray-100 rounded px-2 py-1 focus:outline-none"
+                  >
+                    <option value="Viewer">Viewer</option>
+                    <option value="Commenter">Commenter</option>
+                    <option value="Editor">Editor</option>
+                  </select>
+                )}
+
+                {/* Access dropdown */}
+                {showAccessDropdown && (
+                  <div className="absolute top-0 left-12 z-10 bg-white rounded-lg shadow-xl border py-1 w-52">
+                    <button
+                      onClick={() => { share.setGeneralAccess("restricted"); setShowAccessDropdown(false); }}
+                      className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-left hover:bg-gray-50"
+                    >
+                      {share.generalAccess === "restricted" && (
+                        <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                        </svg>
+                      )}
+                      <span className={share.generalAccess === "restricted" ? "" : "ml-7"}>Restricted</span>
+                    </button>
+                    <button
+                      onClick={() => { share.setGeneralAccess("anyone-with-link"); setShowAccessDropdown(false); }}
+                      className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-left hover:bg-gray-50"
+                    >
+                      {share.generalAccess === "anyone-with-link" && (
+                        <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                        </svg>
+                      )}
+                      <span className={share.generalAccess === "anyone-with-link" ? "" : "ml-7"}>Anyone with the link</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Footer: Copy link + Done */}
+            <div className="flex items-center justify-between px-6 py-4">
               <button
                 onClick={copyLink}
                 className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-full px-4 py-2 transition-colors"
