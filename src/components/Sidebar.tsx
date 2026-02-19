@@ -111,8 +111,8 @@ function ProductAreaSection({ productArea, collapsed }: { productArea: ProductAr
         </button>
         <button
           onClick={() => setCurrentView({ type: "product-area", productAreaId: productArea.id })}
-          className={`flex-1 text-left px-2 py-1 text-sm font-medium rounded hover:bg-gray-100 dark:hover:bg-gray-800 ${
-            isProductAreaActive ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" : "text-gray-700 dark:text-gray-300"
+          className={`flex-1 text-left px-2 py-1 text-sm font-semibold rounded hover:bg-gray-100 dark:hover:bg-gray-800 ${
+            isProductAreaActive ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" : "text-gray-900 dark:text-gray-100"
           }`}
         >
           {productArea.name}
