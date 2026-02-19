@@ -14,6 +14,7 @@ import {
   matchesDeliveryFilter,
   DeliveryFilter,
 } from "./DashboardShared";
+import { ShareLinkButton } from "./ShareDialog";
 
 export default function PortfolioDashboard() {
   const { productAreas } = useNavigation();
@@ -60,7 +61,10 @@ export default function PortfolioDashboard() {
             <h1 className="text-2xl font-bold text-gray-800">Portfolio Overview</h1>
             <p className="text-sm text-gray-500 mt-1">All programs across {productAreas.length} product areas</p>
           </div>
-          <AiReportButton allPrograms={allPrograms} />
+          <div className="flex items-center gap-2">
+            <AiReportButton allPrograms={allPrograms} />
+            <ShareLinkButton title="Portfolio Overview" />
+          </div>
         </div>
 
         {/* KPI Cards + Donut */}

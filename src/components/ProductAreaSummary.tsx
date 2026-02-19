@@ -14,6 +14,7 @@ import {
   matchesDeliveryFilter,
   DeliveryFilter,
 } from "./DashboardShared";
+import { ShareLinkButton } from "./ShareDialog";
 
 export default function ProductAreaSummary() {
   const { getCurrentProductArea } = useNavigation();
@@ -56,7 +57,10 @@ export default function ProductAreaSummary() {
             <h1 className="text-2xl font-bold text-gray-800">{productArea.name}</h1>
             <p className="text-sm text-gray-500 mt-1">{allPrograms.length} programs</p>
           </div>
-          <AiReportButton allPrograms={allPrograms} />
+          <div className="flex items-center gap-2">
+            <AiReportButton allPrograms={allPrograms} />
+            <ShareLinkButton title={productArea.name} />
+          </div>
         </div>
 
         {/* KPI Cards + Donut */}

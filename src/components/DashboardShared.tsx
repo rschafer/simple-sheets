@@ -112,15 +112,15 @@ export function DonutChart({ counts }: { counts: Record<HealthStatus, number> })
           ))}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-bold text-gray-800">{total}</span>
-          <span className="text-xs text-gray-500">Programs</span>
+          <span className="text-2xl font-bold text-gray-800 dark:text-gray-100">{total}</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400">Programs</span>
         </div>
       </div>
       <div className="flex flex-col gap-2">
         {segments.map((seg) => (
           <div key={seg.key} className="flex items-center gap-2">
             <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: seg.color }} />
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-gray-700 dark:text-gray-300">
               {seg.count} {seg.label}
             </span>
           </div>
@@ -205,9 +205,9 @@ export function NeedsAttention({
   };
 
   return (
-    <div className="bg-white rounded-lg border shadow-sm">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
       <div className="px-4 py-3 border-b">
-        <h2 className="text-lg font-semibold text-gray-700">Needs Attention</h2>
+        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Needs Attention</h2>
       </div>
       <div className="p-4 space-y-2">
         {items.slice(0, 8).map((item, i) => (
@@ -398,9 +398,9 @@ export function TimelineBar({ programs }: { programs: { program: Program; produc
   const nowPct = ((now.getTime() - paddedMin.getTime()) / totalRange) * 100;
 
   return (
-    <div className="bg-white rounded-lg border shadow-sm">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
       <div className="px-4 py-3 border-b">
-        <h2 className="text-lg font-semibold text-gray-700">Delivery Timeline</h2>
+        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Delivery Timeline</h2>
       </div>
       <div className="p-4">
         <div className="relative" style={{ minHeight: `${withDates.length * 32 + 24}px` }}>
@@ -467,21 +467,21 @@ export function KpiCards({ programs }: { programs: { program: Program; productAr
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      <div className="bg-white rounded-lg border shadow-sm p-4">
-        <div className="text-3xl font-bold text-gray-800">{total}</div>
-        <div className="text-sm text-gray-500">Total Programs</div>
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4">
+        <div className="text-3xl font-bold text-gray-800 dark:text-gray-100">{total}</div>
+        <div className="text-sm text-gray-500 dark:text-gray-400">Total Programs</div>
       </div>
-      <div className="bg-white rounded-lg border shadow-sm p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4">
         <div className="text-3xl font-bold text-green-600">{pctOnTrack}%</div>
-        <div className="text-sm text-gray-500">On Track</div>
+        <div className="text-sm text-gray-500 dark:text-gray-400">On Track</div>
       </div>
-      <div className="bg-white rounded-lg border shadow-sm p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4">
         <div className="text-3xl font-bold text-blue-600">{upcomingMilestones}</div>
-        <div className="text-sm text-gray-500">Milestones (2 wks)</div>
+        <div className="text-sm text-gray-500 dark:text-gray-400">Milestones (2 wks)</div>
       </div>
-      <div className="bg-white rounded-lg border shadow-sm p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4">
         <div className="text-3xl font-bold text-orange-600">{openRaidItems}</div>
-        <div className="text-sm text-gray-500">Open RAID Items</div>
+        <div className="text-sm text-gray-500 dark:text-gray-400">Open RAID Items</div>
       </div>
     </div>
   );
@@ -500,9 +500,9 @@ export function ProgramsTable({
   const { setCurrentView } = useNavigation();
 
   return (
-    <div className="bg-white rounded-lg border shadow-sm">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
       <div className="px-4 py-3 border-b">
-        <h2 className="text-lg font-semibold text-gray-700">
+        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
           Programs
           {programs.length !== totalCount && (
             <span className="text-sm font-normal text-gray-400 ml-2">
@@ -514,7 +514,7 @@ export function ProgramsTable({
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b text-left text-xs text-gray-500 uppercase tracking-wider">
+            <tr className="border-b border-gray-200 dark:border-gray-700 text-left text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               <th className="px-4 py-3">Program</th>
               {showProductArea && <th className="px-4 py-3">Product Area</th>}
               <th className="px-4 py-3">Health</th>
@@ -534,7 +534,7 @@ export function ProgramsTable({
               return (
                 <tr
                   key={program.id}
-                  className="border-b hover:bg-gray-50 cursor-pointer"
+                  className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                   onClick={() =>
                     setCurrentView({
                       type: "program",
@@ -544,7 +544,7 @@ export function ProgramsTable({
                   }
                 >
                   <td className="px-4 py-3">
-                    <span className="font-medium text-gray-900">{program.name}</span>
+                    <span className="font-medium text-gray-900 dark:text-gray-100">{program.name}</span>
                   </td>
                   {showProductArea && (
                     <td className="px-4 py-3 text-sm text-gray-500">{productArea.name}</td>
@@ -557,11 +557,11 @@ export function ProgramsTable({
                   <td className="px-4 py-3">
                     <TrendArrow program={program} />
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{program.data.phase}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{program.data.phase}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                     {program.data.deliveryDate || "\u2014"}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                     {openRaids > 0 ? (
                       <span className={openRaids > 3 ? "text-orange-600 font-medium" : ""}>
                         {openRaids} open
@@ -570,7 +570,7 @@ export function ProgramsTable({
                       <span className="text-gray-400">0</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                     {totalMilestones > 0 ? (
                       `${completedMilestones}/${totalMilestones}`
                     ) : (

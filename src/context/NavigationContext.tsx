@@ -43,13 +43,16 @@ interface NavigationData {
   productAreas: ProductArea[];
   currentView: ViewType;
   isAdmin: boolean;
+  darkMode: boolean;
 }
 
 interface NavigationContextType {
   productAreas: ProductArea[];
   currentView: ViewType;
   isAdmin: boolean;
+  darkMode: boolean;
   setIsAdmin: (admin: boolean) => void;
+  setDarkMode: (dark: boolean) => void;
   setCurrentView: (view: ViewType) => void;
   getCurrentProgram: () => Program | null;
   getCurrentProductArea: () => ProductArea | null;
@@ -78,6 +81,8 @@ const defaultDashboardData: DashboardData = {
   projectPlan: [],
   sharedUsers: [],
   notifications: [],
+  generalAccess: "restricted",
+  linkAccessLevel: "Viewer",
 };
 
 function createProgram(id: string, name: string): Program {
@@ -165,6 +170,7 @@ const defaultNavData: NavigationData = {
   productAreas: defaultProductAreas,
   currentView: { type: "program", productAreaId: "pa1", programId: "pa1-p1" },
   isAdmin: false,
+  darkMode: false,
 };
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
@@ -267,13 +273,28 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
     setNavData((prev) => ({ ...prev, isAdmin: admin }));
   }, []);
 
+  const setDarkMode = useCallback((dark: boolean) => {
+    setNavData((prev) => ({ ...prev, darkMode: dark }));
+    if (typeof document !== "undefined") {
+      document.documentElement.classList.toggle("dark", dark);
+    }
+  }, []);
+
+  // Apply dark mode class on load
+  useEffect(() => {
+    if (!loaded) return;
+    document.documentElement.classList.toggle("dark", navData.darkMode);
+  }, [loaded, navData.darkMode]);
+
   return (
     <NavigationContext.Provider
       value={{
         productAreas: navData.productAreas,
         currentView: navData.currentView,
         isAdmin: navData.isAdmin,
+        darkMode: navData.darkMode,
         setIsAdmin,
+        setDarkMode,
         setCurrentView,
         getCurrentProgram,
         getCurrentProductArea,

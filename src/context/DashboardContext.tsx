@@ -81,6 +81,8 @@ export interface NotificationSubscription {
   enabled: boolean;
 }
 
+export type GeneralAccess = "restricted" | "anyone-with-link";
+
 export interface DashboardData {
   projectName: string;
   keyLinks: KeyLink[];
@@ -96,6 +98,8 @@ export interface DashboardData {
   projectPlan: ProjectPlanRow[];
   sharedUsers: SharedUser[];
   notifications: NotificationSubscription[];
+  generalAccess: GeneralAccess;
+  linkAccessLevel: AccessLevel;
 }
 
 interface DashboardContextType {
@@ -123,6 +127,8 @@ const defaultData: DashboardData = {
   projectPlan: [],
   sharedUsers: [],
   notifications: [],
+  generalAccess: "restricted",
+  linkAccessLevel: "Viewer",
 };
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
