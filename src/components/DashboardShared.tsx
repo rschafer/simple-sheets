@@ -147,6 +147,157 @@ export function DonutChart({ counts }: { counts: Record<HealthStatus, number> })
   );
 }
 
+// --- AI Message Modal ---
+type AttentionItem = {
+  type: "overdue" | "at-risk" | "off-track";
+  label: string;
+  programName: string;
+  productAreaName: string;
+  programId: string;
+  productAreaId: string;
+};
+
+function generateMessage(item: AttentionItem): string {
+  const greeting = "Hi,";
+  const lines: string[] = [greeting, ""];
+
+  if (item.type === "off-track") {
+    lines.push(`I wanted to flag that the "${item.programName}" program is currently marked as Off Track and needs immediate attention.`);
+    lines.push("");
+    lines.push("Could you please provide an update on:");
+    lines.push("- What is blocking progress?");
+    lines.push("- What support or resources are needed to get back on track?");
+    lines.push("- What is the revised timeline?");
+  } else if (item.type === "at-risk") {
+    lines.push(`I wanted to flag that the "${item.programName}" program is currently At Risk and may need attention.`);
+    lines.push("");
+    lines.push("Could you please provide an update on:");
+    lines.push("- What risks are you seeing?");
+    lines.push("- What mitigation steps are being taken?");
+    lines.push("- Is there anything the team can help with?");
+  } else {
+    lines.push(`I wanted to flag that there is an overdue milestone on the "${item.programName}" program: ${item.label}.`);
+    lines.push("");
+    lines.push("Could you please provide an update on:");
+    lines.push("- What is the current status of this milestone?");
+    lines.push("- What is the revised completion date?");
+    lines.push("- Are there any blockers we should be aware of?");
+  }
+
+  lines.push("");
+  lines.push("Thanks,");
+  lines.push("Robert");
+  return lines.join("\n");
+}
+
+function MessageModal({
+  item,
+  onClose,
+}: {
+  item: AttentionItem;
+  onClose: () => void;
+}) {
+  const [message, setMessage] = useState(() => generateMessage(item));
+  const [recipient, setRecipient] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const subject = `Action needed: ${item.programName} - ${item.label}`;
+
+  const sendViaOutlook = () => {
+    const mailtoUrl = `mailto:${encodeURIComponent(recipient)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+    window.open(mailtoUrl, "_blank");
+  };
+
+  const sendViaSlack = () => {
+    // Slack deep link - opens Slack compose
+    const slackText = `*${subject}*\n\n${message}`;
+    navigator.clipboard.writeText(slackText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    // Open Slack app
+    window.open("slack://", "_blank");
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(`Subject: ${subject}\n\n${message}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+            Send Message
+          </h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          <div>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">To</label>
+            <input
+              value={recipient}
+              onChange={(e) => setRecipient(e.target.value)}
+              placeholder="name@company.com"
+              className="w-full rounded border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-100"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Subject</label>
+            <div className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded px-3 py-2">{subject}</div>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Message</label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows={8}
+              className="w-full rounded border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-100"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+          <button
+            onClick={sendViaOutlook}
+            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Send via Outlook
+          </button>
+          <button
+            onClick={sendViaSlack}
+            className="flex items-center gap-2 rounded-lg bg-[#4A154B] px-4 py-2 text-sm font-medium text-white hover:bg-[#3a1040] transition-colors"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M5.042 15.165a2.528 2.528 0 01-2.52 2.523A2.528 2.528 0 010 15.165a2.527 2.527 0 012.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 012.521-2.52 2.527 2.527 0 012.521 2.52v6.313A2.528 2.528 0 018.834 24a2.528 2.528 0 01-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 01-2.521-2.52A2.528 2.528 0 018.834 0a2.528 2.528 0 012.521 2.522v2.52H8.834zm0 1.271a2.528 2.528 0 012.521 2.521 2.528 2.528 0 01-2.521 2.521H2.522A2.528 2.528 0 010 8.834a2.528 2.528 0 012.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 012.522-2.521A2.528 2.528 0 0124 8.834a2.528 2.528 0 01-2.522 2.521h-2.522V8.834zm-1.27 0a2.528 2.528 0 01-2.523 2.521 2.527 2.527 0 01-2.52-2.521V2.522A2.527 2.527 0 0115.163 0a2.528 2.528 0 012.523 2.522v6.312zM15.163 18.956a2.528 2.528 0 012.523 2.522A2.528 2.528 0 0115.163 24a2.527 2.527 0 01-2.52-2.522v-2.522h2.52zm0-1.27a2.527 2.527 0 01-2.52-2.523 2.527 2.527 0 012.52-2.52h6.315A2.528 2.528 0 0124 15.163a2.528 2.528 0 01-2.522 2.523h-6.315z" />
+            </svg>
+            {copied ? "Copied! Opening Slack..." : "Send via Slack"}
+          </button>
+          <button
+            onClick={copyToClipboard}
+            className="flex items-center gap-1.5 rounded-lg border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+            </svg>
+            {copied ? "Copied!" : "Copy"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // --- Needs Attention Section ---
 export function NeedsAttention({
   allPrograms,
@@ -156,8 +307,9 @@ export function NeedsAttention({
   showProductArea?: boolean;
 }) {
   const { setCurrentView } = useNavigation();
+  const [messageItem, setMessageItem] = useState<AttentionItem | null>(null);
 
-  const items: { type: "overdue" | "at-risk" | "off-track"; label: string; programName: string; productAreaName: string; programId: string; productAreaId: string }[] = [];
+  const items: AttentionItem[] = [];
 
   for (const { program, productArea } of allPrograms) {
     if (program.healthStatus === "red") {
@@ -232,35 +384,62 @@ export function NeedsAttention({
       </div>
       <div className="p-5 space-y-2">
         {items.slice(0, 8).map((item, i) => (
-          <button
+          <div
             key={i}
-            onClick={() =>
-              setCurrentView({
-                type: "program",
-                productAreaId: item.productAreaId,
-                programId: item.programId,
-              })
-            }
-            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg border text-left text-sm hover:opacity-80 transition-opacity ${typeColors[item.type]}`}
+            className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg border text-left text-sm ${typeColors[item.type]}`}
           >
             {typeIcons[item.type]}
-            <div className="flex-1 min-w-0">
+            <button
+              onClick={() =>
+                setCurrentView({
+                  type: "program",
+                  productAreaId: item.productAreaId,
+                  programId: item.programId,
+                })
+              }
+              className="flex-1 min-w-0 text-left hover:opacity-80 transition-opacity"
+            >
               <span className="font-medium">{item.label}</span>
               <span className="text-gray-500 mx-1">-</span>
               <span>{item.programName}</span>
               {showProductArea && (
                 <span className="text-gray-400 text-xs ml-1">({item.productAreaName})</span>
               )}
-            </div>
-            <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
+            </button>
+            <button
+              onClick={() => setMessageItem(item)}
+              className="flex-shrink-0 p-1 rounded hover:bg-black/5 transition-colors"
+              title="Generate message"
+            >
+              <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+            </button>
+            <button
+              onClick={() =>
+                setCurrentView({
+                  type: "program",
+                  productAreaId: item.productAreaId,
+                  programId: item.programId,
+                })
+              }
+              className="flex-shrink-0"
+            >
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         ))}
         {items.length > 8 && (
           <p className="text-xs text-gray-400 text-center pt-1">+{items.length - 8} more items</p>
         )}
       </div>
+
+      {/* Message Modal */}
+      {messageItem && (
+        <MessageModal item={messageItem} onClose={() => setMessageItem(null)} />
+      )}
     </div>
   );
 }

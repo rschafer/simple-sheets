@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useDashboard, ProjectPlanRow } from "@/context/DashboardContext";
+import GanttChart from "./GanttChart";
 
 function generateId() {
   return Math.random().toString(36).substring(2, 9);
@@ -188,6 +189,9 @@ export default function ProjectPlan() {
               </table>
             </div>
           )}
+
+          {/* Gantt Chart */}
+          <GanttChart />
         </>
       )}
     </div>
