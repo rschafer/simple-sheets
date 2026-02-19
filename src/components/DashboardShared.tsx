@@ -595,7 +595,7 @@ export function ProgramsTable({
         )}
       </div>
       <div className="overflow-x-auto bg-gray-50 dark:bg-gray-900/50 rounded-lg p-2 -mx-1">
-        <table className="w-full border-separate border-spacing-y-1.5">
+        <table className="w-full border-separate border-spacing-y-2">
           <thead>
             <tr className="text-left text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               <th className="px-5 py-2">Program</th>
@@ -641,7 +641,7 @@ export function ProgramsTable({
               return (
                 <tr
                   key={program.id}
-                  className="bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow cursor-pointer [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
+                  className="bg-white dark:bg-gray-800 ring-1 ring-gray-200 dark:ring-gray-700 shadow-sm hover:shadow-md transition-shadow cursor-pointer [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
                   onClick={() =>
                     setCurrentView({
                       type: "program",
