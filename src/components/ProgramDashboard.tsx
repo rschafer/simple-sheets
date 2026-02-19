@@ -111,12 +111,12 @@ function ProgramAiReportButton() {
 function ProgramDashboardInner() {
   return (
     <>
-    <div className="p-8">
-      <div className="grid gap-6 max-w-6xl">
-        {/* Header: Project Name + Status + Delivery Date + Contacts + Scope + Key Links */}
-        <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-          <div className="flex flex-col gap-4">
-            <div className="flex items-start justify-between gap-6 flex-wrap">
+    <div className="p-4">
+      <div className="grid gap-3 max-w-6xl">
+        {/* Header: Project Name + Status + Delivery Date + Contacts + Scope */}
+        <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3">
                   <ProjectName />
@@ -128,11 +128,11 @@ function ProgramDashboardInner() {
                 <ShareDialog />
               </div>
             </div>
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 flex items-center gap-6">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-2 flex items-center gap-6">
               <PhaseSelector />
               <DeliveryDate />
             </div>
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 grid gap-4 md:grid-cols-2">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-2 grid gap-4 md:grid-cols-2">
               <PrimaryContacts />
               <Scope />
             </div>
@@ -140,27 +140,27 @@ function ProgramDashboardInner() {
         </section>
 
         {/* Executive Summary */}
-        <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+        <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
           <ExecutiveSummary />
         </section>
 
-        {/* Milestones */}
-        <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-          <Milestones />
-        </section>
-
-        {/* RAID Log */}
-        <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-          <RaidLog />
-        </section>
+        {/* Milestones & RAID Log side-by-side */}
+        <div className="grid gap-3 md:grid-cols-2">
+          <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
+            <Milestones />
+          </section>
+          <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
+            <RaidLog />
+          </section>
+        </div>
 
         {/* Project Plan + Key Links */}
-        <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-          <div className="flex gap-6">
+        <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
+          <div className="flex gap-4">
             <div className="flex-1 min-w-0">
               <ProjectPlan />
             </div>
-            <div className="w-64 flex-shrink-0 border-l border-gray-200 dark:border-gray-700 pl-6">
+            <div className="w-56 flex-shrink-0 border-l border-gray-200 dark:border-gray-700 pl-4">
               <KeyLinks />
             </div>
           </div>

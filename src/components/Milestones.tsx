@@ -15,6 +15,12 @@ const statusColors: Record<MilestoneStatus, string> = {
   Complete: "bg-green-100 text-green-700",
 };
 
+function formatShortDate(iso: string) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
 export default function Milestones() {
   const { data, updateData } = useDashboard();
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -49,83 +55,89 @@ export default function Milestones() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Milestones</h2>
-        <button onClick={addMilestone} className="text-sm text-blue-600 hover:text-blue-800 font-medium">
-          + Add Milestone
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide">
+          Milestones
+          <span className="text-xs font-normal text-gray-500 dark:text-gray-400 ml-1 normal-case tracking-normal">
+            ({data.milestones.length})
+          </span>
+        </h2>
+        <button onClick={addMilestone} className="text-xs text-blue-600 hover:text-blue-800 font-medium">
+          + Add
         </button>
       </div>
 
       {data.milestones.length === 0 ? (
-        <p className="text-gray-500 dark:text-gray-400 text-sm italic">No milestones yet. Click &quot;+ Add Milestone&quot; to get started.</p>
+        <p className="text-gray-500 dark:text-gray-400 text-xs italic">No milestones yet.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b text-left text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                <th className="pb-2 pr-4 min-w-[250px]">Milestone</th>
-                <th className="pb-2 pr-4">Status</th>
-                <th className="pb-2 pr-4">Start</th>
-                <th className="pb-2 pr-4">Finish</th>
-                <th className="pb-2 w-16"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.milestones.map((m) => (
-                <tr
-                  key={m.id}
-                  className={`border-b hover:bg-gray-50 group ${isOverdue(m) ? "bg-red-50" : ""}`}
-                >
-                  <td className="py-2 pr-4">
-                    <textarea
-                      value={m.name}
-                      onChange={(e) => updateMilestone(m.id, { name: e.target.value })}
-                      onFocus={() => setEditingId(m.id)}
-                      onBlur={() => setEditingId(null)}
-                      placeholder="Enter milestone name..."
-                      rows={2}
-                      className="w-full border border-gray-200 rounded px-2 py-1 text-gray-900 placeholder-gray-400 focus:border-blue-400 focus:ring-1 focus:ring-blue-300 outline-none resize-y min-h-[2.5rem]"
-                    />
-                  </td>
-                  <td className="py-2 pr-4">
+        <div className="space-y-1.5">
+          {data.milestones.map((m) => (
+            <div
+              key={m.id}
+              className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-gray-50 dark:hover:bg-gray-700/50 ${
+                isOverdue(m) ? "bg-red-50 dark:bg-red-900/20" : ""
+              }`}
+            >
+              {editingId === m.id ? (
+                <div className="flex-1 space-y-1.5">
+                  <input
+                    autoFocus
+                    value={m.name}
+                    onChange={(e) => updateMilestone(m.id, { name: e.target.value })}
+                    placeholder="Milestone name..."
+                    className="w-full rounded border border-gray-300 px-2 py-1 text-xs text-gray-900 dark:text-gray-100 dark:bg-gray-700 dark:border-gray-600"
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === "Escape") setEditingId(null); }}
+                  />
+                  <div className="flex items-center gap-2">
                     <select
                       value={m.status}
                       onChange={(e) => updateMilestone(m.id, { status: e.target.value as MilestoneStatus })}
-                      className={`rounded px-2 py-1 text-xs font-medium border-0 cursor-pointer ${statusColors[m.status]}`}
+                      className={`rounded px-1.5 py-0.5 text-xs font-medium border-0 cursor-pointer ${statusColors[m.status]}`}
                     >
-                      {statuses.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
+                      {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
-                  </td>
-                  <td className="py-2 pr-4">
-                    <input
-                      type="date"
-                      value={m.startDate}
-                      onChange={(e) => updateMilestone(m.id, { startDate: e.target.value })}
-                      className="bg-transparent border-0 outline-none text-gray-700 text-xs cursor-pointer"
-                    />
-                  </td>
-                  <td className="py-2 pr-4">
                     <input
                       type="date"
                       value={m.finishDate}
                       onChange={(e) => updateMilestone(m.id, { finishDate: e.target.value })}
-                      className={`bg-transparent border-0 outline-none text-xs cursor-pointer ${isOverdue(m) ? "text-red-600 font-medium" : "text-gray-700"}`}
+                      className="text-xs border border-gray-300 rounded px-1.5 py-0.5 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                     />
-                  </td>
-                  <td className="py-2">
-                    <button
-                      onClick={() => removeMilestone(m.id)}
-                      className="text-xs text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      Remove
+                    <button onClick={() => setEditingId(null)} className="text-xs text-gray-500 hover:text-gray-700 ml-auto">
+                      Done
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="flex-1 min-w-0 cursor-pointer" onClick={() => setEditingId(m.id)}>
+                    <div className="flex items-center gap-1.5">
+                      <span className={`font-medium text-gray-900 dark:text-gray-100 truncate ${m.name ? "" : "text-gray-400 italic"}`}>
+                        {m.name || "Untitled milestone"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className={`inline-flex px-1.5 py-0 rounded text-[10px] font-medium leading-4 ${statusColors[m.status]}`}>
+                        {m.status}
+                      </span>
+                      {m.finishDate && (
+                        <span className={`text-[10px] ${isOverdue(m) ? "text-red-600 font-medium" : "text-gray-500 dark:text-gray-400"}`}>
+                          Due {formatShortDate(m.finishDate)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => removeMilestone(m.id)}
+                    className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>
