@@ -63,6 +63,8 @@ export function markdownToHtml(md: string): string {
 // --- Donut Chart (pure SVG) ---
 export function DonutChart({ counts }: { counts: Record<HealthStatus, number> }) {
   const total = counts.green + counts.yellow + counts.red;
+  const [hovered, setHovered] = useState<HealthStatus | null>(null);
+
   if (total === 0) {
     return (
       <div className="flex items-center justify-center w-40 h-40">
@@ -88,8 +90,10 @@ export function DonutChart({ counts }: { counts: Record<HealthStatus, number> })
     const dashArray = `${pct * circumference} ${circumference}`;
     const dashOffset = -offset * circumference;
     offset += pct;
-    return { ...seg, dashArray, dashOffset };
+    return { ...seg, pct, dashArray, dashOffset };
   });
+
+  const hoveredArc = hovered ? arcs.find((a) => a.key === hovered) : null;
 
   return (
     <div className="flex items-center gap-6">
@@ -103,17 +107,30 @@ export function DonutChart({ counts }: { counts: Record<HealthStatus, number> })
               r={radius}
               fill="none"
               stroke={arc.color}
-              strokeWidth={strokeWidth}
+              strokeWidth={hovered === arc.key ? strokeWidth + 4 : strokeWidth}
               strokeDasharray={arc.dashArray}
               strokeDashoffset={arc.dashOffset}
               strokeLinecap="round"
               transform="rotate(-90 70 70)"
+              opacity={hovered && hovered !== arc.key ? 0.4 : 1}
+              className="transition-all duration-150 cursor-pointer"
+              onMouseEnter={() => setHovered(arc.key)}
+              onMouseLeave={() => setHovered(null)}
             />
           ))}
         </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-bold text-gray-800 dark:text-gray-100">{total}</span>
-          <span className="text-xs text-gray-500 dark:text-gray-400">Programs</span>
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          {hoveredArc ? (
+            <>
+              <span className="text-2xl font-bold" style={{ color: hoveredArc.color }}>{Math.round(hoveredArc.pct * 100)}%</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">{hoveredArc.label}</span>
+            </>
+          ) : (
+            <>
+              <span className="text-2xl font-bold text-gray-800 dark:text-gray-100">{total}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">Programs</span>
+            </>
+          )}
         </div>
       </div>
       <div className="flex flex-col gap-2">
@@ -177,6 +194,10 @@ export function NeedsAttention({
       });
     }
   }
+
+  // Sort: off-track (red) first, then at-risk (yellow), then overdue
+  const typePriority: Record<string, number> = { "off-track": 0, "at-risk": 1, overdue: 2 };
+  items.sort((a, b) => typePriority[a.type] - typePriority[b.type]);
 
   if (items.length === 0) return null;
 
@@ -397,22 +418,42 @@ export function TimelineBar({ programs }: { programs: { program: Program; produc
 
   const nowPct = ((now.getTime() - paddedMin.getTime()) / totalRange) * 100;
 
+  // Generate month tick marks for the horizontal axis
+  const ticks: { date: Date; pct: number }[] = [];
+  const tickStart = new Date(paddedMin.getFullYear(), paddedMin.getMonth() + 1, 1);
+  for (let d = new Date(tickStart); d <= paddedMax; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)) {
+    const pct = ((d.getTime() - paddedMin.getTime()) / totalRange) * 100;
+    if (pct > 2 && pct < 98) {
+      ticks.push({ date: new Date(d), pct });
+    }
+  }
+
+  const axisHeight = 24;
+
   return (
     <div className="card">
       <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700">
         <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">Target Date Timeline</h2>
       </div>
       <div className="p-5">
-        <div className="relative" style={{ minHeight: `${withDates.length * 32 + 24}px` }}>
+        <div className="relative" style={{ minHeight: `${withDates.length * 32 + 24 + axisHeight}px` }}>
+          {/* Month tick lines */}
+          {ticks.map((tick, i) => (
+            <div
+              key={i}
+              className="absolute top-0 border-l border-gray-200 dark:border-gray-700"
+              style={{ left: `${tick.pct}%`, height: `${withDates.length * 32 + 24}px` }}
+            />
+          ))}
           <div
-            className="absolute top-0 bottom-0 border-l-2 border-blue-400 border-dashed z-10"
-            style={{ left: `${Math.max(0, Math.min(100, nowPct))}%` }}
+            className="absolute top-0 border-l-2 border-blue-400 border-dashed z-10"
+            style={{ left: `${Math.max(0, Math.min(100, nowPct))}%`, height: `${withDates.length * 32 + 24}px` }}
           >
-            <span className="absolute -top-1 -translate-x-1/2 text-[10px] text-blue-500 font-medium bg-white px-1">
+            <span className="absolute -top-1 -translate-x-1/2 text-[10px] text-blue-500 font-medium bg-white dark:bg-gray-800 px-1">
               Today
             </span>
           </div>
-          {withDates.map(({ program, productArea }, i) => {
+          {withDates.map(({ program }, i) => {
             const deliveryDate = new Date(program.data.deliveryDate);
             const endPct = ((deliveryDate.getTime() - paddedMin.getTime()) / totalRange) * 100;
             const startPct = Math.max(0, endPct - 15);
@@ -427,12 +468,27 @@ export function TimelineBar({ programs }: { programs: { program: Program; produc
                   className="h-5 rounded-full w-full"
                   style={{ backgroundColor: healthDotColors[program.healthStatus], opacity: 0.7 }}
                 />
-                <span className="absolute right-0 translate-x-full pl-2 text-xs text-gray-600 whitespace-nowrap">
+                <span className="absolute right-0 translate-x-full pl-2 text-xs text-gray-600 dark:text-gray-400 whitespace-nowrap">
                   {program.name}
                 </span>
               </div>
             );
           })}
+          {/* Horizontal axis with date labels */}
+          <div
+            className="absolute left-0 right-0 border-t border-gray-300 dark:border-gray-600"
+            style={{ top: `${withDates.length * 32 + 24}px` }}
+          >
+            {ticks.map((tick, i) => (
+              <span
+                key={i}
+                className="absolute -translate-x-1/2 text-[10px] text-gray-500 dark:text-gray-400 pt-1"
+                style={{ left: `${tick.pct}%` }}
+              >
+                {tick.date.toLocaleDateString("en-US", { month: "short", year: "2-digit" })}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -111,7 +111,7 @@ function ProductAreaSection({ productArea, collapsed }: { productArea: ProductAr
         </button>
         <button
           onClick={() => setCurrentView({ type: "product-area", productAreaId: productArea.id })}
-          className={`flex-1 text-left px-2 py-1 text-sm font-semibold rounded hover:bg-gray-100 dark:hover:bg-gray-800 ${
+          className={`flex-1 text-left px-2 py-1 text-sm font-semibold rounded hover:bg-gray-100 dark:hover:bg-gray-800 whitespace-nowrap ${
             isProductAreaActive ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400" : "text-gray-900 dark:text-gray-100"
           }`}
         >
@@ -170,7 +170,7 @@ function ProductAreaSection({ productArea, collapsed }: { productArea: ProductAr
                   }`}
                 >
                   <HealthDot status={program.healthStatus} />
-                  <span className="truncate">{program.name}</span>
+                  <span className="whitespace-nowrap">{program.name}</span>
                 </button>
                 {isAdmin && (
                   <div className="relative">
@@ -297,6 +297,16 @@ export default function Sidebar() {
   const sidebarRef = useRef<HTMLElement>(null);
 
   const collapsed = width <= MIN_WIDTH + 20;
+  const navRef = useRef<HTMLElement>(null);
+
+  // Auto-expand sidebar to fit program names
+  useEffect(() => {
+    if (collapsed || !navRef.current) return;
+    const scrollW = navRef.current.scrollWidth;
+    if (scrollW > width) {
+      setWidth(Math.min(MAX_WIDTH, scrollW + 16));
+    }
+  }, [productAreas, collapsed]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -345,7 +355,7 @@ export default function Sidebar() {
           </svg>
         </button>
       </div>
-      <nav className={`flex-1 overflow-y-auto ${collapsed ? "p-2" : "p-3"}`}>
+      <nav ref={navRef} className={`flex-1 overflow-y-auto ${collapsed ? "p-2" : "p-3"}`}>
         {/* Portfolio Overview link */}
         {collapsed ? (
           <div className="mb-3">

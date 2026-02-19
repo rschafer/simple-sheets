@@ -21,6 +21,7 @@ export default function PortfolioDashboard() {
   const [healthFilter, setHealthFilter] = useState<HealthStatus | "all">("all");
   const [phaseFilter, setPhaseFilter] = useState<ProjectPhase | "all">("all");
   const [deliveryFilter, setDeliveryFilter] = useState<DeliveryFilter>("all");
+  const [productAreaFilter, setProductAreaFilter] = useState<string>("all");
 
   const allPrograms = useMemo(() => {
     const result: { program: Program; productArea: ProductArea }[] = [];
@@ -32,24 +33,29 @@ export default function PortfolioDashboard() {
     return result;
   }, [productAreas]);
 
-  const healthCounts = useMemo(() => {
-    return allPrograms.reduce(
+  const filteredByProductArea = useMemo(() => {
+    if (productAreaFilter === "all") return allPrograms;
+    return allPrograms.filter(({ productArea }) => productArea.id === productAreaFilter);
+  }, [allPrograms, productAreaFilter]);
+
+  const healthCounts_filtered = useMemo(() => {
+    return filteredByProductArea.reduce(
       (acc, { program }) => {
         acc[program.healthStatus]++;
         return acc;
       },
       { green: 0, yellow: 0, red: 0 } as Record<HealthStatus, number>
     );
-  }, [allPrograms]);
+  }, [filteredByProductArea]);
 
   const filteredPrograms = useMemo(() => {
-    return allPrograms.filter(({ program }) => {
+    return filteredByProductArea.filter(({ program }) => {
       if (healthFilter !== "all" && program.healthStatus !== healthFilter) return false;
       if (phaseFilter !== "all" && program.data.phase !== phaseFilter) return false;
       if (!matchesDeliveryFilter(program.data.deliveryDate, deliveryFilter)) return false;
       return true;
     });
-  }, [allPrograms, healthFilter, phaseFilter, deliveryFilter]);
+  }, [filteredByProductArea, healthFilter, phaseFilter, deliveryFilter]);
 
   return (
     <div className="p-8">
@@ -60,8 +66,18 @@ export default function PortfolioDashboard() {
             <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Portfolio Overview</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">All programs across {productAreas.length} product areas</p>
           </div>
-          <div className="flex items-center gap-2">
-            <AiReportButton allPrograms={allPrograms} />
+          <div className="flex items-center gap-3">
+            <select
+              value={productAreaFilter}
+              onChange={(e) => setProductAreaFilter(e.target.value)}
+              className={`rounded-lg border px-3 py-2 text-sm ${productAreaFilter !== "all" ? "border-blue-400 bg-blue-50 text-blue-700" : "border-gray-300 text-gray-600"}`}
+            >
+              <option value="all">All Product Areas</option>
+              {productAreas.map((pa) => (
+                <option key={pa.id} value={pa.id}>{pa.name}</option>
+              ))}
+            </select>
+            <AiReportButton allPrograms={filteredByProductArea} />
             <ShareLinkButton title="Portfolio Overview" />
           </div>
         </div>
@@ -69,19 +85,19 @@ export default function PortfolioDashboard() {
         {/* KPI Cards + Donut */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="card p-6 flex items-center justify-center">
-            <DonutChart counts={healthCounts} />
+            <DonutChart counts={healthCounts_filtered} />
           </div>
-          <KpiCards programs={allPrograms} />
+          <KpiCards programs={filteredByProductArea} />
         </div>
 
         {/* Needs Attention */}
-        <NeedsAttention allPrograms={allPrograms} showProductArea={true} />
+        <NeedsAttention allPrograms={filteredByProductArea} showProductArea={true} />
 
         {/* Programs Table with inline column filters */}
         <ProgramsTable
           programs={filteredPrograms}
           showProductArea={true}
-          totalCount={allPrograms.length}
+          totalCount={filteredByProductArea.length}
           healthFilter={healthFilter}
           setHealthFilter={setHealthFilter}
           phaseFilter={phaseFilter}
