@@ -144,15 +144,15 @@ function ProgramDashboardInner() {
           <ExecutiveSummary />
         </section>
 
-        {/* Milestones & RAID Log */}
-        <div className="grid gap-6 md:grid-cols-2">
-          <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <Milestones />
-          </section>
-          <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
-            <RaidLog />
-          </section>
-        </div>
+        {/* Milestones */}
+        <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+          <Milestones />
+        </section>
+
+        {/* RAID Log */}
+        <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
+          <RaidLog />
+        </section>
 
         {/* Project Plan + Key Links */}
         <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 shadow-sm">
