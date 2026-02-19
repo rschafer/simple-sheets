@@ -54,8 +54,8 @@ export default function ProductAreaSummary() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">{productArea.name}</h1>
-            <p className="text-sm text-gray-500 mt-1">{allPrograms.length} programs</p>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{productArea.name}</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{allPrograms.length} programs</p>
           </div>
           <div className="flex items-center gap-2">
             <AiReportButton allPrograms={allPrograms} />
@@ -65,7 +65,7 @@ export default function ProductAreaSummary() {
 
         {/* KPI Cards + Donut */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg border shadow-sm p-6 flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-6 flex items-center justify-center">
             <DonutChart counts={healthCounts} />
           </div>
           <KpiCards programs={allPrograms} />
@@ -75,7 +75,7 @@ export default function ProductAreaSummary() {
         <NeedsAttention allPrograms={allPrograms} showProductArea={false} />
 
         {/* Filters */}
-        <div className="bg-white rounded-lg border shadow-sm p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4">
           <FilterBar
             healthFilter={healthFilter}
             setHealthFilter={setHealthFilter}

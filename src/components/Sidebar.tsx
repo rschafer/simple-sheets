@@ -122,86 +122,76 @@ function SettingsPopover({ collapsed, onClose }: { collapsed: boolean; onClose: 
     document.documentElement.classList.toggle("compact", compactMode);
   }, [compactMode]);
 
+  const Toggle = ({ enabled }: { enabled: boolean }) => (
+    <span className={`w-9 h-[22px] rounded-full relative transition-colors duration-200 ${enabled ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"}`}>
+      <span className={`absolute top-[3px] left-[3px] w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-200 ${enabled ? "translate-x-[14px]" : ""}`} />
+    </span>
+  );
+
   return (
     <div
       ref={popoverRef}
-      className={`absolute bottom-14 ${collapsed ? "left-1" : "left-3 right-3"} bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 ${collapsed ? "w-56" : ""}`}
+      className={`absolute bottom-14 ${collapsed ? "left-1" : "left-3 right-3"} bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl z-50 ${collapsed ? "w-60" : ""}`}
     >
-      <div className="p-3 border-b border-gray-200 dark:border-gray-700">
-        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Settings</h3>
+      <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+        <h3 className="text-[13px] font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Settings</h3>
       </div>
-      <div className="p-2 space-y-1">
+      <div className="p-1.5 space-y-0.5">
         {/* Dark Mode */}
         <button
           onClick={() => setDarkMode(!darkMode)}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+          className="w-full flex items-center gap-3 px-3 py-2.5 text-[13px] rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/60 text-gray-800 dark:text-gray-200 transition-colors"
         >
-          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {darkMode ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-            )}
-          </svg>
-          <span className="flex-1 text-left">Dark Mode</span>
-          <span className={`w-8 h-5 rounded-full relative transition-colors ${darkMode ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"}`}>
-            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${darkMode ? "translate-x-3" : ""}`} />
+          <span className="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center flex-shrink-0">
+            <svg className="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {darkMode ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              )}
+            </svg>
           </span>
+          <span className="flex-1 text-left font-medium">Dark Mode</span>
+          <Toggle enabled={darkMode} />
         </button>
         {/* Compact Mode */}
         <button
           onClick={() => setCompactMode(!compactMode)}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+          className="w-full flex items-center gap-3 px-3 py-2.5 text-[13px] rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/60 text-gray-800 dark:text-gray-200 transition-colors"
         >
-          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-          </svg>
-          <span className="flex-1 text-left">Compact Mode</span>
-          <span className={`w-8 h-5 rounded-full relative transition-colors ${compactMode ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"}`}>
-            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${compactMode ? "translate-x-3" : ""}`} />
+          <span className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center flex-shrink-0">
+            <svg className="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
           </span>
+          <span className="flex-1 text-left font-medium">Compact Mode</span>
+          <Toggle enabled={compactMode} />
         </button>
         {/* Admin Mode */}
         <button
           onClick={() => setIsAdmin(!isAdmin)}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+          className="w-full flex items-center gap-3 px-3 py-2.5 text-[13px] rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/60 text-gray-800 dark:text-gray-200 transition-colors"
         >
-          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-          <span className="flex-1 text-left">Admin Mode</span>
-          <span className={`w-8 h-5 rounded-full relative transition-colors ${isAdmin ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"}`}>
-            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${isAdmin ? "translate-x-3" : ""}`} />
+          <span className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center flex-shrink-0">
+            <svg className="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
           </span>
+          <span className="flex-1 text-left font-medium">Admin Mode</span>
+          <Toggle enabled={isAdmin} />
         </button>
         {/* Auto-Save */}
         <button
           onClick={() => setAutoSave(!autoSave)}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+          className="w-full flex items-center gap-3 px-3 py-2.5 text-[13px] rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/60 text-gray-800 dark:text-gray-200 transition-colors"
         >
-          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-          </svg>
-          <span className="flex-1 text-left">Auto-Save</span>
-          <span className={`w-8 h-5 rounded-full relative transition-colors ${autoSave ? "bg-blue-600" : "bg-gray-300 dark:bg-gray-600"}`}>
-            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${autoSave ? "translate-x-3" : ""}`} />
+          <span className="w-7 h-7 rounded-lg bg-sky-100 dark:bg-sky-900/40 flex items-center justify-center flex-shrink-0">
+            <svg className="w-4 h-4 text-sky-600 dark:text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
           </span>
-        </button>
-      </div>
-      <div className="p-2 border-t border-gray-200 dark:border-gray-700">
-        <button
-          onClick={() => {
-            if (window.confirm("Reset all data to defaults? This cannot be undone.")) {
-              localStorage.clear();
-              window.location.reload();
-            }
-          }}
-          className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400"
-        >
-          <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          <span className="flex-1 text-left">Reset All Data</span>
+          <span className="flex-1 text-left font-medium">Auto-Save</span>
+          <Toggle enabled={autoSave} />
         </button>
       </div>
     </div>

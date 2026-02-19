@@ -58,8 +58,8 @@ export default function PortfolioDashboard() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Portfolio Overview</h1>
-            <p className="text-sm text-gray-500 mt-1">All programs across {productAreas.length} product areas</p>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Portfolio Overview</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">All programs across {productAreas.length} product areas</p>
           </div>
           <div className="flex items-center gap-2">
             <AiReportButton allPrograms={allPrograms} />
@@ -69,7 +69,7 @@ export default function PortfolioDashboard() {
 
         {/* KPI Cards + Donut */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg border shadow-sm p-6 flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-6 flex items-center justify-center">
             <DonutChart counts={healthCounts} />
           </div>
           <KpiCards programs={allPrograms} />
@@ -79,7 +79,7 @@ export default function PortfolioDashboard() {
         <NeedsAttention allPrograms={allPrograms} showProductArea={true} />
 
         {/* Filters */}
-        <div className="bg-white rounded-lg border shadow-sm p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4">
           <FilterBar
             healthFilter={healthFilter}
             setHealthFilter={setHealthFilter}
