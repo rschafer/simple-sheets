@@ -154,15 +154,13 @@ function ProgramDashboardInner() {
           </section>
         </div>
 
-        {/* Project Plan & Key Links */}
-        <div className="grid gap-4 md:grid-cols-2">
-          <section className="card p-5">
-            <ProjectPlan />
-          </section>
-          <section className="card p-5">
+        {/* Project Plan + Key Links */}
+        <section className="card p-5">
+          <ProjectPlan />
+          <div className="mt-4 border-t border-gray-100 dark:border-gray-700 pt-4">
             <KeyLinks />
-          </section>
-        </div>
+          </div>
+        </section>
       </div>
     </div>
     <Notifications />
