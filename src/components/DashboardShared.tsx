@@ -158,30 +158,32 @@ type AttentionItem = {
 };
 
 function generateMessage(item: AttentionItem): string {
-  const greeting = "Hi,";
-  const lines: string[] = [greeting, ""];
+  const lines: string[] = ["Hi,", ""];
 
   if (item.type === "off-track") {
-    lines.push(`I wanted to flag that the "${item.programName}" program is currently marked as Off Track and needs immediate attention.`);
+    lines.push(`Following up on ${item.programName} \u2014 can we set up 30 minutes this week to walk through a recovery plan? Specifically looking for:`);
     lines.push("");
-    lines.push("Could you please provide an update on:");
-    lines.push("- What is blocking progress?");
-    lines.push("- What support or resources are needed to get back on track?");
-    lines.push("- What is the revised timeline?");
+    lines.push("- A revised timeline with key milestones");
+    lines.push("- Any resources or decisions you need from leadership to unblock");
+    lines.push("- Dependencies we should escalate");
+    lines.push("");
+    lines.push("Happy to help remove blockers on my end. Let me know what time works.");
   } else if (item.type === "at-risk") {
-    lines.push(`I wanted to flag that the "${item.programName}" program is currently At Risk and may need attention.`);
+    lines.push(`Checking in on ${item.programName} \u2014 before our next review, could you share:`);
     lines.push("");
-    lines.push("Could you please provide an update on:");
-    lines.push("- What risks are you seeing?");
-    lines.push("- What mitigation steps are being taken?");
-    lines.push("- Is there anything the team can help with?");
+    lines.push("- Your top 1-2 concerns and what would resolve them");
+    lines.push("- Any decisions or support needed from the team");
+    lines.push("- Whether the current delivery date still holds or needs adjusting");
+    lines.push("");
+    lines.push("Want to make sure we get ahead of anything before it becomes a blocker.");
   } else {
-    lines.push(`I wanted to flag that there is an overdue milestone on the "${item.programName}" program: ${item.label}.`);
+    lines.push(`Following up on ${item.programName} \u2014 could you send over:`);
     lines.push("");
-    lines.push("Could you please provide an update on:");
-    lines.push("- What is the current status of this milestone?");
-    lines.push("- What is the revised completion date?");
-    lines.push("- Are there any blockers we should be aware of?");
+    lines.push("- A revised completion date for the milestone");
+    lines.push("- What's needed to close it out");
+    lines.push("- Any downstream impact we should flag to other teams");
+    lines.push("");
+    lines.push("If there's a quick win to get this across the line, let me know how I can help.");
   }
 
   lines.push("");
