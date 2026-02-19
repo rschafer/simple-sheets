@@ -12,10 +12,26 @@ export interface Program {
   data: DashboardData;
 }
 
+export interface ProductAreaTemplate {
+  labels: {
+    recentProgress: string;
+    nextSteps: string;
+    risksAndMitigation: string;
+    impactToOtherPrograms: string;
+  };
+  defaultContent: {
+    recentProgress: string;
+    nextSteps: string;
+    risksAndMitigation: string;
+    impactToOtherPrograms: string;
+  };
+}
+
 export interface ProductArea {
   id: string;
   name: string;
   programs: Program[];
+  template: ProductAreaTemplate;
 }
 
 export type ViewType =
@@ -26,16 +42,20 @@ export type ViewType =
 interface NavigationData {
   productAreas: ProductArea[];
   currentView: ViewType;
+  isAdmin: boolean;
 }
 
 interface NavigationContextType {
   productAreas: ProductArea[];
   currentView: ViewType;
+  isAdmin: boolean;
+  setIsAdmin: (admin: boolean) => void;
   setCurrentView: (view: ViewType) => void;
   getCurrentProgram: () => Program | null;
   getCurrentProductArea: () => ProductArea | null;
   updateProgramData: (programId: string, data: Partial<DashboardData>) => void;
   updateProgramHealth: (programId: string, health: HealthStatus) => void;
+  updateProductAreaTemplate: (productAreaId: string, template: ProductAreaTemplate) => void;
 }
 
 const defaultDashboardData: DashboardData = {
@@ -78,6 +98,20 @@ const defaultProductAreas: ProductArea[] = [
       createProgram("pa1-p2", "Program 2"),
       createProgram("pa1-p3", "Program 3"),
     ],
+    template: {
+      labels: {
+        recentProgress: "Delivery Milestones",
+        nextSteps: "Upcoming Releases",
+        risksAndMitigation: "Risks and Mitigation",
+        impactToOtherPrograms: "Technical Debt",
+      },
+      defaultContent: {
+        recentProgress: "- ",
+        nextSteps: "- ",
+        risksAndMitigation: "- ",
+        impactToOtherPrograms: "- ",
+      },
+    },
   },
   {
     id: "pa2",
@@ -87,6 +121,20 @@ const defaultProductAreas: ProductArea[] = [
       createProgram("pa2-p2", "Program 2"),
       createProgram("pa2-p3", "Program 3"),
     ],
+    template: {
+      labels: {
+        recentProgress: "Business Impact & KPIs",
+        nextSteps: "Strategic Priorities",
+        risksAndMitigation: "Risks and Mitigation",
+        impactToOtherPrograms: "Budget & Resource Summary",
+      },
+      defaultContent: {
+        recentProgress: "- ",
+        nextSteps: "- ",
+        risksAndMitigation: "- ",
+        impactToOtherPrograms: "- ",
+      },
+    },
   },
   {
     id: "pa3",
@@ -96,12 +144,27 @@ const defaultProductAreas: ProductArea[] = [
       createProgram("pa3-p2", "Program 2"),
       createProgram("pa3-p3", "Program 3"),
     ],
+    template: {
+      labels: {
+        recentProgress: "Customer Feedback & Adoption",
+        nextSteps: "Roadmap Highlights",
+        risksAndMitigation: "Risks and Mitigation",
+        impactToOtherPrograms: "Cross-Team Dependencies",
+      },
+      defaultContent: {
+        recentProgress: "- ",
+        nextSteps: "- ",
+        risksAndMitigation: "- ",
+        impactToOtherPrograms: "- ",
+      },
+    },
   },
 ];
 
 const defaultNavData: NavigationData = {
   productAreas: defaultProductAreas,
   currentView: { type: "program", productAreaId: "pa1", programId: "pa1-p1" },
+  isAdmin: false,
 };
 
 const NavigationContext = createContext<NavigationContextType | undefined>(undefined);
@@ -191,16 +254,32 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const updateProductAreaTemplate = useCallback((productAreaId: string, template: ProductAreaTemplate) => {
+    setNavData((prev) => ({
+      ...prev,
+      productAreas: prev.productAreas.map((pa) =>
+        pa.id === productAreaId ? { ...pa, template } : pa
+      ),
+    }));
+  }, []);
+
+  const setIsAdmin = useCallback((admin: boolean) => {
+    setNavData((prev) => ({ ...prev, isAdmin: admin }));
+  }, []);
+
   return (
     <NavigationContext.Provider
       value={{
         productAreas: navData.productAreas,
         currentView: navData.currentView,
+        isAdmin: navData.isAdmin,
+        setIsAdmin,
         setCurrentView,
         getCurrentProgram,
         getCurrentProductArea,
         updateProgramData,
         updateProgramHealth,
+        updateProductAreaTemplate,
       }}
     >
       {children}

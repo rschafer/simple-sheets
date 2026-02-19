@@ -7,9 +7,10 @@ function generateId() {
   return Math.random().toString(36).substring(2, 9);
 }
 
-const accessLevels: AccessLevel[] = ["Owner", "Editor", "Commenter", "Viewer"];
+const accessLevels: AccessLevel[] = ["Admin", "Owner", "Editor", "Commenter", "Viewer"];
 
 const accessDescriptions: Record<AccessLevel, string> = {
+  Admin: "Full control, manage templates & access",
   Owner: "Full control, manage access",
   Editor: "Can edit all content",
   Commenter: "Can view and comment",

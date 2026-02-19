@@ -62,7 +62,7 @@ export interface ProjectPlanRow {
   indent: number;
 }
 
-export type AccessLevel = "Owner" | "Editor" | "Viewer" | "Commenter";
+export type AccessLevel = "Admin" | "Owner" | "Editor" | "Viewer" | "Commenter";
 
 export interface SharedUser {
   id: string;

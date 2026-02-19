@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useDashboard, ExecutiveSummary as ESType } from "@/context/DashboardContext";
+import { useNavigation, ProductAreaTemplate } from "@/context/NavigationContext";
 
 function generateId() {
   return Math.random().toString(36).substring(2, 9);
@@ -17,84 +18,35 @@ function formatDate(iso: string) {
 
 const MAX_SENTENCES = 3;
 
-// Count sentences (split by . ! ?)
 function countSentences(text: string): number {
   if (!text.trim()) return 0;
   const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
   return sentences.length;
 }
 
-// Check if text exceeds sentence limit
 function exceedsLimit(text: string): boolean {
   return countSentences(text) > MAX_SENTENCES;
 }
 
-// Simple AI summarizer - condenses text to 3 sentences
 function summarizeText(text: string): string {
   if (!text.trim()) return text;
-
-  // Split into sentences
   const sentences = text.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 0);
-
   if (sentences.length <= MAX_SENTENCES) return text;
-
-  // Take first 3 sentences (simple approach)
-  // In a real app, this would call an AI API
   return sentences.slice(0, MAX_SENTENCES).join(" ");
 }
 
-const TEMPLATES = {
-  blank: {
-    name: "Blank",
-    recentProgress: "",
-    nextSteps: "",
-    risksAndMitigation: "",
-    impactToOtherPrograms: "",
-    labels: {
-      recentProgress: "Section 1",
-      nextSteps: "Section 2",
-      risksAndMitigation: "Risks and Mitigation",
-      impactToOtherPrograms: "Section 4",
-    },
+const fallbackTemplate: ProductAreaTemplate = {
+  labels: {
+    recentProgress: "Recent Progress",
+    nextSteps: "Next Steps",
+    risksAndMitigation: "Risks and Mitigation",
+    impactToOtherPrograms: "Impact to Other Programs",
   },
-  productArea1: {
-    name: "Product Area 1",
+  defaultContent: {
     recentProgress: "- ",
     nextSteps: "- ",
     risksAndMitigation: "- ",
     impactToOtherPrograms: "- ",
-    labels: {
-      recentProgress: "Delivery Milestones",
-      nextSteps: "Upcoming Releases",
-      risksAndMitigation: "Risks and Mitigation",
-      impactToOtherPrograms: "Technical Debt",
-    },
-  },
-  productArea2: {
-    name: "Product Area 2",
-    recentProgress: "- ",
-    nextSteps: "- ",
-    risksAndMitigation: "- ",
-    impactToOtherPrograms: "- ",
-    labels: {
-      recentProgress: "Business Impact & KPIs",
-      nextSteps: "Strategic Priorities",
-      risksAndMitigation: "Risks and Mitigation",
-      impactToOtherPrograms: "Budget & Resource Summary",
-    },
-  },
-  productArea3: {
-    name: "Product Area 3",
-    recentProgress: "- ",
-    nextSteps: "- ",
-    risksAndMitigation: "- ",
-    impactToOtherPrograms: "- ",
-    labels: {
-      recentProgress: "Customer Feedback & Adoption",
-      nextSteps: "Roadmap Highlights",
-      risksAndMitigation: "Risks and Mitigation",
-      impactToOtherPrograms: "Cross-Team Dependencies",
-    },
   },
 };
 
@@ -116,40 +68,110 @@ function SummaryBullets({ text }: { text: string }) {
   );
 }
 
+function TemplateEditorModal({
+  template,
+  onSave,
+  onClose,
+}: {
+  template: ProductAreaTemplate;
+  onSave: (t: ProductAreaTemplate) => void;
+  onClose: () => void;
+}) {
+  const [labels, setLabels] = useState({ ...template.labels });
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <div className="relative bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Edit Template</h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Customize the section labels for this product area&apos;s executive summary template.
+        </p>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Section 1 Label</label>
+            <input
+              value={labels.recentProgress}
+              onChange={(e) => setLabels({ ...labels, recentProgress: e.target.value })}
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Section 2 Label</label>
+            <input
+              value={labels.nextSteps}
+              onChange={(e) => setLabels({ ...labels, nextSteps: e.target.value })}
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Section 3 Label</label>
+            <input
+              value={labels.risksAndMitigation}
+              onChange={(e) => setLabels({ ...labels, risksAndMitigation: e.target.value })}
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Section 4 Label</label>
+            <input
+              value={labels.impactToOtherPrograms}
+              onChange={(e) => setLabels({ ...labels, impactToOtherPrograms: e.target.value })}
+              className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+            />
+          </div>
+        </div>
+        <div className="flex gap-2 pt-4">
+          <button
+            onClick={() => onSave({ ...template, labels })}
+            className="flex-1 rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            Save Template
+          </button>
+          <button
+            onClick={onClose}
+            className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ExecutiveSummary() {
   const { data, updateData } = useDashboard();
+  const { getCurrentProductArea, isAdmin, updateProductAreaTemplate } = useNavigation();
   const [editing, setEditing] = useState(false);
   const [viewingHistoryId, setViewingHistoryId] = useState<string | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<keyof typeof TEMPLATES>("productArea1");
-  const [draft, setDraft] = useState<Omit<ESType, "id" | "date">>({
-    recentProgress: TEMPLATES.productArea1.recentProgress,
-    nextSteps: TEMPLATES.productArea1.nextSteps,
-    risksAndMitigation: TEMPLATES.productArea1.risksAndMitigation,
-    impactToOtherPrograms: TEMPLATES.productArea1.impactToOtherPrograms,
-  });
   const [showAiModal, setShowAiModal] = useState(false);
+  const [showTemplateEditor, setShowTemplateEditor] = useState(false);
   const [aiStartDate, setAiStartDate] = useState("");
   const [aiEndDate, setAiEndDate] = useState("");
   const [generating, setGenerating] = useState(false);
 
-  const applyTemplate = (templateKey: keyof typeof TEMPLATES) => {
-    const template = TEMPLATES[templateKey];
-    setSelectedTemplate(templateKey);
-    setDraft({
-      recentProgress: template.recentProgress,
-      nextSteps: template.nextSteps,
-      risksAndMitigation: template.risksAndMitigation,
-      impactToOtherPrograms: template.impactToOtherPrograms,
-    });
-  };
+  const currentPA = getCurrentProductArea();
+  const template = currentPA?.template || fallbackTemplate;
+
+  const [draft, setDraft] = useState<Omit<ESType, "id" | "date">>({
+    recentProgress: template.defaultContent.recentProgress,
+    nextSteps: template.defaultContent.nextSteps,
+    risksAndMitigation: template.defaultContent.risksAndMitigation,
+    impactToOtherPrograms: template.defaultContent.impactToOtherPrograms,
+  });
 
   const startNewEntry = () => {
-    applyTemplate(selectedTemplate);
+    setDraft({
+      recentProgress: template.defaultContent.recentProgress,
+      nextSteps: template.defaultContent.nextSteps,
+      risksAndMitigation: template.defaultContent.risksAndMitigation,
+      impactToOtherPrograms: template.defaultContent.impactToOtherPrograms,
+    });
     setEditing(true);
     setViewingHistoryId(null);
   };
 
-  // Generate summary using AI API
   const generateAiSummary = async () => {
     if (!aiStartDate || !aiEndDate) return;
 
@@ -202,6 +224,13 @@ export default function ExecutiveSummary() {
     setEditing(false);
   };
 
+  const handleSaveTemplate = (newTemplate: ProductAreaTemplate) => {
+    if (currentPA) {
+      updateProductAreaTemplate(currentPA.id, newTemplate);
+    }
+    setShowTemplateEditor(false);
+  };
+
   const latestSummary = data.executiveSummaries[0];
   const viewingSummary = viewingHistoryId
     ? data.executiveSummaries.find((s) => s.id === viewingHistoryId)
@@ -227,6 +256,14 @@ export default function ExecutiveSummary() {
               ))}
             </select>
           )}
+          {isAdmin && (
+            <button
+              onClick={() => setShowTemplateEditor(true)}
+              className="text-sm text-gray-500 hover:text-gray-700 font-medium"
+            >
+              Edit Template
+            </button>
+          )}
           <div className="flex items-center gap-1">
             <button
               onClick={() => setShowAiModal(true)}
@@ -251,6 +288,15 @@ export default function ExecutiveSummary() {
           </button>
         </div>
       </div>
+
+      {/* Template Editor Modal (Admin only) */}
+      {showTemplateEditor && (
+        <TemplateEditorModal
+          template={template}
+          onSave={handleSaveTemplate}
+          onClose={() => setShowTemplateEditor(false)}
+        />
+      )}
 
       {/* AI Generation Modal */}
       {showAiModal && (
@@ -303,22 +349,10 @@ export default function ExecutiveSummary() {
 
       {editing ? (
         <div className="space-y-4">
-          <div className="flex items-center gap-2 pb-2 border-b">
-            <label className="text-sm text-gray-500">Template:</label>
-            <select
-              value={selectedTemplate}
-              onChange={(e) => applyTemplate(e.target.value as keyof typeof TEMPLATES)}
-              className="rounded border border-gray-300 px-2 py-1 text-sm text-gray-600"
-            >
-              {Object.entries(TEMPLATES).map(([key, template]) => (
-                <option key={key} value={key}>{template.name}</option>
-              ))}
-            </select>
-          </div>
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="text-sm font-medium text-gray-600">
-                {TEMPLATES[selectedTemplate].labels.recentProgress}
+                {template.labels.recentProgress}
               </label>
               <div className="flex items-center gap-2">
                 <span className={`text-xs ${exceedsLimit(draft.recentProgress) ? "text-red-500 font-medium" : "text-gray-400"}`}>
@@ -345,7 +379,7 @@ export default function ExecutiveSummary() {
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="text-sm font-medium text-gray-600">
-                {TEMPLATES[selectedTemplate].labels.nextSteps}
+                {template.labels.nextSteps}
               </label>
               <div className="flex items-center gap-2">
                 <span className={`text-xs ${exceedsLimit(draft.nextSteps) ? "text-red-500 font-medium" : "text-gray-400"}`}>
@@ -371,7 +405,7 @@ export default function ExecutiveSummary() {
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="text-sm font-medium text-gray-600">
-                {TEMPLATES[selectedTemplate].labels.risksAndMitigation}
+                {template.labels.risksAndMitigation}
               </label>
               <div className="flex items-center gap-2">
                 <span className={`text-xs ${exceedsLimit(draft.risksAndMitigation) ? "text-red-500 font-medium" : "text-gray-400"}`}>
@@ -394,11 +428,11 @@ export default function ExecutiveSummary() {
               className={`w-full rounded border px-3 py-2 text-sm text-gray-700 focus:outline-none ${exceedsLimit(draft.risksAndMitigation) ? "border-red-300 focus:border-red-400" : "border-gray-300 focus:border-blue-400"}`}
             />
           </div>
-          {TEMPLATES[selectedTemplate].labels.impactToOtherPrograms && (
+          {template.labels.impactToOtherPrograms && (
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="text-sm font-medium text-gray-600">
-                  {TEMPLATES[selectedTemplate].labels.impactToOtherPrograms}
+                  {template.labels.impactToOtherPrograms}
                 </label>
                 <div className="flex items-center gap-2">
                   <span className={`text-xs ${exceedsLimit(draft.impactToOtherPrograms) ? "text-red-500 font-medium" : "text-gray-400"}`}>
@@ -426,7 +460,7 @@ export default function ExecutiveSummary() {
             {(exceedsLimit(draft.recentProgress) ||
               exceedsLimit(draft.nextSteps) ||
               exceedsLimit(draft.risksAndMitigation) ||
-              (TEMPLATES[selectedTemplate].labels.impactToOtherPrograms && exceedsLimit(draft.impactToOtherPrograms))) && (
+              (template.labels.impactToOtherPrograms && exceedsLimit(draft.impactToOtherPrograms))) && (
               <span className="text-xs text-red-500">Each section must be 3 sentences or less</span>
             )}
             <button
@@ -435,7 +469,7 @@ export default function ExecutiveSummary() {
                 exceedsLimit(draft.recentProgress) ||
                 exceedsLimit(draft.nextSteps) ||
                 exceedsLimit(draft.risksAndMitigation) ||
-                Boolean(TEMPLATES[selectedTemplate].labels.impactToOtherPrograms && exceedsLimit(draft.impactToOtherPrograms))
+                Boolean(template.labels.impactToOtherPrograms && exceedsLimit(draft.impactToOtherPrograms))
               }
               className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
@@ -453,20 +487,20 @@ export default function ExecutiveSummary() {
         <div className="space-y-4">
           <p className="text-xs text-gray-400">{formatDate(displaySummary.date)}</p>
           <div>
-            <h3 className="text-sm font-semibold text-gray-600 mb-1">Recent Progress</h3>
+            <h3 className="text-sm font-semibold text-gray-600 mb-1">{template.labels.recentProgress}</h3>
             <SummaryBullets text={displaySummary.recentProgress} />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-600 mb-1">Next Steps</h3>
+            <h3 className="text-sm font-semibold text-gray-600 mb-1">{template.labels.nextSteps}</h3>
             <SummaryBullets text={displaySummary.nextSteps} />
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-gray-600 mb-1">Risks and Mitigation Plan</h3>
+            <h3 className="text-sm font-semibold text-gray-600 mb-1">{template.labels.risksAndMitigation}</h3>
             <SummaryBullets text={displaySummary.risksAndMitigation} />
           </div>
           {displaySummary.impactToOtherPrograms && (
             <div>
-              <h3 className="text-sm font-semibold text-gray-600 mb-1">Impact to Other Programs</h3>
+              <h3 className="text-sm font-semibold text-gray-600 mb-1">{template.labels.impactToOtherPrograms}</h3>
               <SummaryBullets text={displaySummary.impactToOtherPrograms} />
             </div>
           )}
