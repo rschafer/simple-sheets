@@ -24,6 +24,7 @@ function formatShortDate(iso: string) {
 export default function Milestones() {
   const { data, updateData } = useDashboard();
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [draft, setDraft] = useState<Milestone | null>(null);
 
   const addMilestone = () => {
     const m: Milestone = {
@@ -35,17 +36,35 @@ export default function Milestones() {
     };
     updateData({ milestones: [...data.milestones, m] });
     setEditingId(m.id);
+    setDraft({ ...m });
   };
 
-  const updateMilestone = (id: string, partial: Partial<Milestone>) => {
-    updateData({
-      milestones: data.milestones.map((m) => (m.id === id ? { ...m, ...partial } : m)),
-    });
+  const startEditing = (m: Milestone) => {
+    setEditingId(m.id);
+    setDraft({ ...m });
+  };
+
+  const cancelEditing = () => {
+    setEditingId(null);
+    setDraft(null);
+  };
+
+  const saveDraft = () => {
+    if (draft) {
+      updateData({
+        milestones: data.milestones.map((m) => (m.id === draft.id ? { ...m, ...draft } : m)),
+      });
+    }
+    setEditingId(null);
+    setDraft(null);
   };
 
   const removeMilestone = (id: string) => {
     updateData({ milestones: data.milestones.filter((m) => m.id !== id) });
-    if (editingId === id) setEditingId(null);
+    if (editingId === id) {
+      setEditingId(null);
+      setDraft(null);
+    }
   };
 
   const isOverdue = (m: Milestone) => {
@@ -78,38 +97,43 @@ export default function Milestones() {
                 isOverdue(m) ? "bg-red-50 dark:bg-red-900/20" : ""
               }`}
             >
-              {editingId === m.id ? (
+              {editingId === m.id && draft ? (
                 <div className="flex-1 space-y-1.5">
                   <input
                     autoFocus
-                    value={m.name}
-                    onChange={(e) => updateMilestone(m.id, { name: e.target.value })}
+                    value={draft.name}
+                    onChange={(e) => setDraft({ ...draft, name: e.target.value })}
                     placeholder="Milestone name..."
                     className="w-full rounded border border-gray-300 px-2 py-1 text-xs text-gray-900 dark:text-gray-100 dark:bg-gray-700 dark:border-gray-600"
-                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === "Escape") setEditingId(null); }}
+                    onKeyDown={(e) => { if (e.key === "Enter") saveDraft(); if (e.key === "Escape") cancelEditing(); }}
                   />
                   <div className="flex items-center gap-2">
                     <select
-                      value={m.status}
-                      onChange={(e) => updateMilestone(m.id, { status: e.target.value as MilestoneStatus })}
-                      className={`rounded px-1.5 py-0.5 text-xs font-medium border-0 cursor-pointer ${statusColors[m.status]}`}
+                      value={draft.status}
+                      onChange={(e) => setDraft({ ...draft, status: e.target.value as MilestoneStatus })}
+                      className={`rounded px-1.5 py-0.5 text-xs font-medium border-0 cursor-pointer ${statusColors[draft.status]}`}
                     >
                       {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
                     <input
                       type="date"
-                      value={m.finishDate}
-                      onChange={(e) => updateMilestone(m.id, { finishDate: e.target.value })}
+                      value={draft.finishDate}
+                      onChange={(e) => setDraft({ ...draft, finishDate: e.target.value })}
                       className="text-xs border border-gray-300 rounded px-1.5 py-0.5 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                     />
-                    <button onClick={() => setEditingId(null)} className="text-xs text-gray-500 hover:text-gray-700 ml-auto">
-                      Done
-                    </button>
+                    <div className="flex items-center gap-1.5 ml-auto">
+                      <button onClick={cancelEditing} className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                        Cancel
+                      </button>
+                      <button onClick={saveDraft} className="text-xs text-white bg-blue-600 hover:bg-blue-700 rounded px-2 py-0.5 font-medium">
+                        Save
+                      </button>
+                    </div>
                   </div>
                 </div>
               ) : (
                 <>
-                  <div className="flex-1 min-w-0 cursor-pointer" onClick={() => setEditingId(m.id)}>
+                  <div className="flex-1 min-w-0 cursor-pointer" onClick={() => startEditing(m)}>
                     <div className="flex items-center gap-1.5">
                       <span className={`font-medium text-gray-900 dark:text-gray-100 truncate ${m.name ? "" : "text-gray-400 italic"}`}>
                         {m.name || "Untitled milestone"}

@@ -82,7 +82,7 @@ function TemplateEditorModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-      <div className="relative bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+      <div className="relative bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Edit Template</h3>
         <p className="text-sm text-gray-600 mb-4">
           Customize the section labels for this product area&apos;s executive summary template.
@@ -240,7 +240,7 @@ export default function ExecutiveSummary() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Executive Summary</h2>
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Executive Summary</h2>
         <div className="flex gap-2">
           {data.executiveSummaries.length > 0 && (
             <select
@@ -302,7 +302,7 @@ export default function ExecutiveSummary() {
       {showAiModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/30" onClick={() => setShowAiModal(false)} />
-          <div className="relative bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+          <div className="relative bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Generate Summary with AI</h3>
             <p className="text-sm text-gray-600 mb-4">
               Select a date range to generate a summary based on your project plan and RAID log.

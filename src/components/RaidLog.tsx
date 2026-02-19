@@ -31,6 +31,7 @@ const statusColors: Record<RaidStatus, string> = {
 export default function RaidLog() {
   const { data, updateData } = useDashboard();
   const [panelItem, setPanelItem] = useState<RaidItem | null>(null);
+  const [draft, setDraft] = useState<RaidItem | null>(null);
   const [filterType, setFilterType] = useState<RaidType | "">("");
 
   const addItem = () => {
@@ -44,19 +45,35 @@ export default function RaidLog() {
     };
     updateData({ raidItems: [...data.raidItems, item] });
     setPanelItem(item);
+    setDraft({ ...item });
   };
 
   const updateItem = (id: string, partial: Partial<RaidItem>) => {
     const updated = data.raidItems.map((r) => (r.id === id ? { ...r, ...partial } : r));
     updateData({ raidItems: updated });
-    if (panelItem && panelItem.id === id) {
-      setPanelItem({ ...panelItem, ...partial });
-    }
   };
 
   const removeItem = (id: string) => {
     updateData({ raidItems: data.raidItems.filter((r) => r.id !== id) });
     if (panelItem?.id === id) setPanelItem(null);
+  };
+
+  const openPanel = (item: RaidItem) => {
+    setPanelItem(item);
+    setDraft({ ...item });
+  };
+
+  const closePanel = () => {
+    setPanelItem(null);
+    setDraft(null);
+  };
+
+  const saveDraft = () => {
+    if (draft) {
+      updateItem(draft.id, draft);
+      setPanelItem(draft);
+    }
+    closePanel();
   };
 
   const filtered = data.raidItems.filter((r) => !filterType || r.type === filterType);
@@ -96,7 +113,7 @@ export default function RaidLog() {
               className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-xs cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 ${
                 item.status === "Closed" ? "opacity-50" : ""
               }`}
-              onClick={() => setPanelItem(item)}
+              onClick={() => openPanel(item)}
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
@@ -132,24 +149,24 @@ export default function RaidLog() {
       )}
 
       {/* Side Panel */}
-      {panelItem && (
+      {panelItem && draft && (
         <div className="fixed inset-0 z-50 flex justify-end">
-          <div className="absolute inset-0 bg-black/20" onClick={() => setPanelItem(null)} />
-          <div className="relative w-full max-w-md bg-white dark:bg-gray-800 shadow-xl p-6 overflow-y-auto">
+          <div className="absolute inset-0 bg-black/20" onClick={closePanel} />
+          <div className="relative w-full max-w-md bg-white dark:bg-gray-800 shadow-xl p-6 overflow-y-auto flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">RAID Item</h3>
-              <button onClick={() => setPanelItem(null)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <button onClick={closePanel} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-4 flex-1">
               <div>
                 <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Summary</label>
                 <input
-                  value={panelItem.summary}
-                  onChange={(e) => { updateItem(panelItem.id, { summary: e.target.value }); setPanelItem({ ...panelItem, summary: e.target.value }); }}
+                  value={draft.summary}
+                  onChange={(e) => setDraft({ ...draft, summary: e.target.value })}
                   className="w-full rounded border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
@@ -157,8 +174,8 @@ export default function RaidLog() {
                 <div>
                   <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Type</label>
                   <select
-                    value={panelItem.type}
-                    onChange={(e) => { const v = e.target.value as RaidType; updateItem(panelItem.id, { type: v }); setPanelItem({ ...panelItem, type: v }); }}
+                    value={draft.type}
+                    onChange={(e) => setDraft({ ...draft, type: e.target.value as RaidType })}
                     className="w-full rounded border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-100"
                   >
                     {raidTypes.map((t) => <option key={t} value={t}>{t}</option>)}
@@ -167,8 +184,8 @@ export default function RaidLog() {
                 <div>
                   <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Status</label>
                   <select
-                    value={panelItem.status}
-                    onChange={(e) => { const v = e.target.value as RaidStatus; updateItem(panelItem.id, { status: v }); setPanelItem({ ...panelItem, status: v }); }}
+                    value={draft.status}
+                    onChange={(e) => setDraft({ ...draft, status: e.target.value as RaidStatus })}
                     className="w-full rounded border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-100"
                   >
                     {raidStatuses.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -178,26 +195,42 @@ export default function RaidLog() {
               <div>
                 <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Assigned To</label>
                 <input
-                  value={panelItem.assignedTo}
-                  onChange={(e) => { updateItem(panelItem.id, { assignedTo: e.target.value }); setPanelItem({ ...panelItem, assignedTo: e.target.value }); }}
+                  value={draft.assignedTo}
+                  onChange={(e) => setDraft({ ...draft, assignedTo: e.target.value })}
                   className="w-full rounded border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Notes / Next Steps</label>
                 <textarea
-                  value={panelItem.nextSteps}
-                  onChange={(e) => { updateItem(panelItem.id, { nextSteps: e.target.value }); setPanelItem({ ...panelItem, nextSteps: e.target.value }); }}
+                  value={draft.nextSteps}
+                  onChange={(e) => setDraft({ ...draft, nextSteps: e.target.value })}
                   rows={4}
                   className="w-full rounded border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
+            </div>
+            <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
               <button
-                onClick={() => { removeItem(panelItem.id); setPanelItem(null); }}
+                onClick={() => { removeItem(panelItem.id); closePanel(); }}
                 className="text-sm text-red-600 hover:text-red-800"
               >
-                Delete this item
+                Delete
               </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={closePanel}
+                  className="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 rounded border border-gray-300 dark:border-gray-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={saveDraft}
+                  className="px-3 py-1.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded font-medium"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
         </div>

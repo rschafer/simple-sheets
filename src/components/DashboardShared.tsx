@@ -205,11 +205,11 @@ export function NeedsAttention({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-      <div className="px-4 py-3 border-b">
-        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Needs Attention</h2>
+    <div className="card">
+      <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700">
+        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">Needs Attention</h2>
       </div>
-      <div className="p-4 space-y-2">
+      <div className="p-5 space-y-2">
         {items.slice(0, 8).map((item, i) => (
           <button
             key={i}
@@ -398,11 +398,11 @@ export function TimelineBar({ programs }: { programs: { program: Program; produc
   const nowPct = ((now.getTime() - paddedMin.getTime()) / totalRange) * 100;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-      <div className="px-4 py-3 border-b">
-        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Delivery Timeline</h2>
+    <div className="card">
+      <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700">
+        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">Target Date Timeline</h2>
       </div>
-      <div className="p-4">
+      <div className="p-5">
         <div className="relative" style={{ minHeight: `${withDates.length * 32 + 24}px` }}>
           <div
             className="absolute top-0 bottom-0 border-l-2 border-blue-400 border-dashed z-10"
@@ -445,21 +445,6 @@ export function KpiCards({ programs }: { programs: { program: Program; productAr
   const onTrack = programs.filter(({ program }) => program.healthStatus === "green").length;
   const pctOnTrack = total > 0 ? Math.round((onTrack / total) * 100) : 0;
 
-  const upcomingMilestones = programs.reduce((count, { program }) => {
-    const now = new Date();
-    const twoWeeks = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
-    return (
-      count +
-      program.data.milestones.filter(
-        (m) =>
-          m.status !== "Complete" &&
-          m.finishDate &&
-          new Date(m.finishDate) >= now &&
-          new Date(m.finishDate) <= twoWeeks
-      ).length
-    );
-  }, 0);
-
   const openRaidItems = programs.reduce(
     (count, { program }) => count + program.data.raidItems.filter((r) => r.status !== "Closed").length,
     0
@@ -467,21 +452,17 @@ export function KpiCards({ programs }: { programs: { program: Program; productAr
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4">
+      <div className="card p-5">
         <div className="text-3xl font-bold text-gray-800 dark:text-gray-100">{total}</div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">Total Programs</div>
+        <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">Total Programs</div>
       </div>
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4">
+      <div className="card p-5">
         <div className="text-3xl font-bold text-green-600">{pctOnTrack}%</div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">On Track</div>
+        <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">On Track</div>
       </div>
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4">
-        <div className="text-3xl font-bold text-blue-600">{upcomingMilestones}</div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">Milestones (2 wks)</div>
-      </div>
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4">
+      <div className="card p-5">
         <div className="text-3xl font-bold text-orange-600">{openRaidItems}</div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">Open RAID Items</div>
+        <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">Open RAID Items</div>
       </div>
     </div>
   );
@@ -594,9 +575,9 @@ export function ProgramsTable({
     (deliveryFilter && deliveryFilter !== "all");
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-      <div className="px-4 py-3 border-b flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+    <div className="card">
+      <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wide">
           Programs
           {programs.length !== totalCount && (
             <span className="text-sm font-normal text-gray-400 ml-2">
@@ -616,10 +597,10 @@ export function ProgramsTable({
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-200 dark:border-gray-700 text-left text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              <th className="px-4 py-3">Program</th>
-              {showProductArea && <th className="px-4 py-3">Product Area</th>}
-              <th className="px-4 py-3">
+            <tr className="border-b border-gray-100 dark:border-gray-700 text-left text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-5 py-3">Program</th>
+              {showProductArea && <th className="px-5 py-3">Product Area</th>}
+              <th className="px-5 py-3">
                 {setHealthFilter ? (
                   <ColumnFilterDropdown
                     label="Health"
@@ -629,8 +610,8 @@ export function ProgramsTable({
                   />
                 ) : "Health"}
               </th>
-              <th className="px-4 py-3">Trend</th>
-              <th className="px-4 py-3">
+              <th className="px-5 py-3">Trend</th>
+              <th className="px-5 py-3">
                 {setPhaseFilter ? (
                   <ColumnFilterDropdown
                     label="Phase"
@@ -640,30 +621,27 @@ export function ProgramsTable({
                   />
                 ) : "Phase"}
               </th>
-              <th className="px-4 py-3">
+              <th className="px-5 py-3">
                 {setDeliveryFilter ? (
                   <ColumnFilterDropdown
-                    label="Delivery"
+                    label="Target Date"
                     value={deliveryFilter || "all"}
                     options={deliveryOptions}
                     onChange={(v) => setDeliveryFilter(v as DeliveryFilter)}
                   />
-                ) : "Delivery Date"}
+                ) : "Target Date"}
               </th>
-              <th className="px-4 py-3">RAID</th>
-              <th className="px-4 py-3">Milestones</th>
+              <th className="px-5 py-3">RAID</th>
             </tr>
           </thead>
           <tbody>
             {programs.map(({ program, productArea }) => {
               const openRaids = program.data.raidItems.filter((r) => r.status !== "Closed").length;
-              const completedMilestones = program.data.milestones.filter((m) => m.status === "Complete").length;
-              const totalMilestones = program.data.milestones.length;
 
               return (
                 <tr
                   key={program.id}
-                  className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                   onClick={() =>
                     setCurrentView({
                       type: "program",
@@ -672,25 +650,25 @@ export function ProgramsTable({
                     })
                   }
                 >
-                  <td className="px-4 py-3">
+                  <td className="px-5 py-3.5">
                     <span className="font-medium text-gray-900 dark:text-gray-100">{program.name}</span>
                   </td>
                   {showProductArea && (
-                    <td className="px-4 py-3 text-sm text-gray-500">{productArea.name}</td>
+                    <td className="px-5 py-3.5 text-sm text-gray-500">{productArea.name}</td>
                   )}
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${healthColors[program.healthStatus]}`}>
+                  <td className="px-5 py-3.5">
+                    <span className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-full ${healthColors[program.healthStatus]}`}>
                       {healthLabels[program.healthStatus]}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-5 py-3.5">
                     <TrendArrow program={program} />
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{program.data.phase}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                  <td className="px-5 py-3.5 text-sm text-gray-600 dark:text-gray-400">{program.data.phase}</td>
+                  <td className="px-5 py-3.5 text-sm text-gray-600 dark:text-gray-400">
                     {program.data.deliveryDate || "\u2014"}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                  <td className="px-5 py-3.5 text-sm text-gray-600 dark:text-gray-400">
                     {openRaids > 0 ? (
                       <span className={openRaids > 3 ? "text-orange-600 font-medium" : ""}>
                         {openRaids} open
@@ -699,19 +677,12 @@ export function ProgramsTable({
                       <span className="text-gray-400">0</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
-                    {totalMilestones > 0 ? (
-                      `${completedMilestones}/${totalMilestones}`
-                    ) : (
-                      <span className="text-gray-400">-</span>
-                    )}
-                  </td>
                 </tr>
               );
             })}
             {programs.length === 0 && (
               <tr>
-                <td colSpan={showProductArea ? 8 : 7} className="px-4 py-8 text-center text-gray-400 text-sm">
+                <td colSpan={showProductArea ? 7 : 6} className="px-5 py-10 text-center text-gray-400 text-sm">
                   No programs match your filters
                 </td>
               </tr>
@@ -774,7 +745,7 @@ export function AiReportButton({ allPrograms }: { allPrograms: { program: Progra
       <button
         onClick={generateReport}
         disabled={generating}
-        className="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        className="flex items-center gap-2 rounded-xl bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -785,7 +756,7 @@ export function AiReportButton({ allPrograms }: { allPrograms: { program: Progra
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} />
-          <div className="relative bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+          <div className="relative bg-white rounded-2xl shadow-xl p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-800">AI Report</h3>
               <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600">

@@ -68,7 +68,7 @@ export default function ProjectPlan() {
       <div className="flex items-center justify-between mb-3">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-gray-100"
+          className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide"
         >
           <span className={`transition-transform ${expanded ? "rotate-90" : ""}`}>{"\u25B6"}</span>
           Project Plan

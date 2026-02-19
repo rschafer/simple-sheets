@@ -64,7 +64,7 @@ function ProgramAiReportButton() {
       <button
         onClick={generateReport}
         disabled={generating}
-        className="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        className="flex items-center gap-2 rounded-xl bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -75,7 +75,7 @@ function ProgramAiReportButton() {
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} />
-          <div className="relative bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+          <div className="relative bg-white rounded-2xl shadow-xl p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-800">AI Report — {program.name}</h3>
               <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600">
@@ -111,11 +111,11 @@ function ProgramAiReportButton() {
 function ProgramDashboardInner() {
   return (
     <>
-    <div className="p-4">
-      <div className="grid gap-3 max-w-6xl">
-        {/* Header: Project Name + Status + Delivery Date + Contacts + Scope */}
-        <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
-          <div className="flex flex-col gap-2">
+    <div className="p-6">
+      <div className="grid gap-4 max-w-6xl">
+        {/* Header: Project Name + Status + Target Date + Contacts + Scope */}
+        <section className="card p-5">
+          <div className="flex flex-col gap-3">
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3">
@@ -128,11 +128,11 @@ function ProgramDashboardInner() {
                 <ShareDialog />
               </div>
             </div>
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-2 flex items-center gap-6">
+            <div className="border-t border-gray-100 dark:border-gray-700 pt-3 flex items-center gap-6">
               <PhaseSelector />
               <DeliveryDate />
             </div>
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-2 grid gap-4 md:grid-cols-2">
+            <div className="border-t border-gray-100 dark:border-gray-700 pt-3 grid gap-4 md:grid-cols-2">
               <PrimaryContacts />
               <Scope />
             </div>
@@ -140,27 +140,27 @@ function ProgramDashboardInner() {
         </section>
 
         {/* Executive Summary */}
-        <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
+        <section className="card p-5">
           <ExecutiveSummary />
         </section>
 
         {/* Milestones & RAID Log side-by-side */}
-        <div className="grid gap-3 md:grid-cols-2">
-          <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
+        <div className="grid gap-4 md:grid-cols-2">
+          <section className="card p-5">
             <Milestones />
           </section>
-          <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
+          <section className="card p-5">
             <RaidLog />
           </section>
         </div>
 
         {/* Project Plan + Key Links */}
-        <section className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
-          <div className="flex gap-4">
+        <section className="card p-5">
+          <div className="flex gap-5">
             <div className="flex-1 min-w-0">
               <ProjectPlan />
             </div>
-            <div className="w-56 flex-shrink-0 border-l border-gray-200 dark:border-gray-700 pl-4">
+            <div className="w-56 flex-shrink-0 border-l border-gray-100 dark:border-gray-700 pl-5">
               <KeyLinks />
             </div>
           </div>

@@ -64,7 +64,7 @@ export default function ProductAreaSummary() {
 
         {/* KPI Cards + Donut */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-6 flex items-center justify-center">
+          <div className="card p-6 flex items-center justify-center">
             <DonutChart counts={healthCounts} />
           </div>
           <KpiCards programs={allPrograms} />
