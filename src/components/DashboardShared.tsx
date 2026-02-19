@@ -771,6 +771,9 @@ export function ProgramsTable({
   setPhaseFilter,
   deliveryFilter,
   setDeliveryFilter,
+  productAreaFilter,
+  setProductAreaFilter,
+  productAreaOptions,
 }: {
   programs: { program: Program; productArea: ProductArea }[];
   showProductArea?: boolean;
@@ -781,6 +784,9 @@ export function ProgramsTable({
   setPhaseFilter?: (v: ProjectPhase | "all") => void;
   deliveryFilter?: DeliveryFilter;
   setDeliveryFilter?: (v: DeliveryFilter) => void;
+  productAreaFilter?: string;
+  setProductAreaFilter?: (v: string) => void;
+  productAreaOptions?: { value: string; label: string }[];
 }) {
   const { setCurrentView } = useNavigation();
 
@@ -809,7 +815,8 @@ export function ProgramsTable({
   const hasFilters =
     (healthFilter && healthFilter !== "all") ||
     (phaseFilter && phaseFilter !== "all") ||
-    (deliveryFilter && deliveryFilter !== "all");
+    (deliveryFilter && deliveryFilter !== "all") ||
+    (productAreaFilter && productAreaFilter !== "all");
 
   return (
     <div className="card">
@@ -824,7 +831,7 @@ export function ProgramsTable({
         </h2>
         {hasFilters && setHealthFilter && setPhaseFilter && setDeliveryFilter && (
           <button
-            onClick={() => { setHealthFilter("all"); setPhaseFilter("all"); setDeliveryFilter("all"); }}
+            onClick={() => { setHealthFilter("all"); setPhaseFilter("all"); setDeliveryFilter("all"); if (setProductAreaFilter) setProductAreaFilter("all"); }}
             className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           >
             Clear filters
@@ -836,7 +843,18 @@ export function ProgramsTable({
           <thead>
             <tr className="text-left text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               <th className="px-5 py-2">Program</th>
-              {showProductArea && <th className="px-5 py-2">Product Area</th>}
+              {showProductArea && (
+                <th className="px-5 py-2">
+                  {setProductAreaFilter && productAreaOptions ? (
+                    <ColumnFilterDropdown
+                      label="Product Area"
+                      value={productAreaFilter || "all"}
+                      options={productAreaOptions}
+                      onChange={(v) => setProductAreaFilter(v)}
+                    />
+                  ) : "Product Area"}
+                </th>
+              )}
               <th className="px-5 py-3">
                 {setHealthFilter ? (
                   <ColumnFilterDropdown

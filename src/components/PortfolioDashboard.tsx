@@ -33,6 +33,11 @@ export default function PortfolioDashboard() {
     return result;
   }, [productAreas]);
 
+  const productAreaOptions = useMemo(() => [
+    { value: "all", label: "All Areas" },
+    ...productAreas.map((pa) => ({ value: pa.id, label: pa.name })),
+  ], [productAreas]);
+
   const filteredByProductArea = useMemo(() => {
     if (productAreaFilter === "all") return allPrograms;
     return allPrograms.filter(({ productArea }) => productArea.id === productAreaFilter);
@@ -67,16 +72,6 @@ export default function PortfolioDashboard() {
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">All programs across {productAreas.length} product areas</p>
           </div>
           <div className="flex items-center gap-3">
-            <select
-              value={productAreaFilter}
-              onChange={(e) => setProductAreaFilter(e.target.value)}
-              className={`rounded-lg border px-3 py-2 text-sm ${productAreaFilter !== "all" ? "border-blue-400 bg-blue-50 text-blue-700" : "border-gray-300 text-gray-600"}`}
-            >
-              <option value="all">All Product Areas</option>
-              {productAreas.map((pa) => (
-                <option key={pa.id} value={pa.id}>{pa.name}</option>
-              ))}
-            </select>
             <AiReportButton allPrograms={filteredByProductArea} />
             <ShareLinkButton title="Portfolio Overview" />
           </div>
@@ -97,13 +92,16 @@ export default function PortfolioDashboard() {
         <ProgramsTable
           programs={filteredPrograms}
           showProductArea={true}
-          totalCount={filteredByProductArea.length}
+          totalCount={allPrograms.length}
           healthFilter={healthFilter}
           setHealthFilter={setHealthFilter}
           phaseFilter={phaseFilter}
           setPhaseFilter={setPhaseFilter}
           deliveryFilter={deliveryFilter}
           setDeliveryFilter={setDeliveryFilter}
+          productAreaFilter={productAreaFilter}
+          setProductAreaFilter={setProductAreaFilter}
+          productAreaOptions={productAreaOptions}
         />
 
         {/* Timeline */}
