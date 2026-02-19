@@ -594,12 +594,12 @@ export function ProgramsTable({
           </button>
         )}
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full">
+      <div className="overflow-x-auto bg-gray-50 dark:bg-gray-900/50 rounded-lg p-2 -mx-1">
+        <table className="w-full border-separate border-spacing-y-1.5">
           <thead>
-            <tr className="border-b border-gray-100 dark:border-gray-700 text-left text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              <th className="px-5 py-3">Program</th>
-              {showProductArea && <th className="px-5 py-3">Product Area</th>}
+            <tr className="text-left text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-5 py-2">Program</th>
+              {showProductArea && <th className="px-5 py-2">Product Area</th>}
               <th className="px-5 py-3">
                 {setHealthFilter ? (
                   <ColumnFilterDropdown
@@ -641,7 +641,7 @@ export function ProgramsTable({
               return (
                 <tr
                   key={program.id}
-                  className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  className="bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow cursor-pointer [&>td:first-child]:rounded-l-lg [&>td:last-child]:rounded-r-lg"
                   onClick={() =>
                     setCurrentView({
                       type: "program",
