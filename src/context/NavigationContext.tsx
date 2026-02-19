@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useCallback, useEffect, Rea
 import { DashboardData, HealthStatus } from "./DashboardContext";
 
 const NAV_STORAGE_KEY = "navigation-data";
-const NAV_DATA_VERSION = "2"; // Bump to force reload with new mock data
+const NAV_DATA_VERSION = "3"; // Bump to force reload with new mock data
 
 export interface Program {
   id: string;
@@ -130,6 +130,20 @@ const defaultProductAreas: ProductArea[] = [
               risksAndMitigation: "- Legacy API deprecation timeline may slip if migration adoption is slow. Mitigation: weekly adoption metrics review with stakeholders.",
               impactToOtherPrograms: "- Auth service changes require coordinated release with Identity Platform team",
             },
+            {
+              id: "es2", date: "2026-02-07",
+              recentProgress: "- Core gateway implementation complete\n- Auth middleware prototype passing all unit tests\n- Staging environment provisioned",
+              nextSteps: "- Integrate auth middleware with gateway\n- Begin load testing at scale\n- Deploy to staging for integration testing",
+              risksAndMitigation: "- Load testing infrastructure not yet provisioned. Mitigation: DevOps prioritizing setup this sprint.",
+              impactToOtherPrograms: "- No immediate cross-team impacts this week",
+            },
+            {
+              id: "es3", date: "2026-01-31",
+              recentProgress: "- RFC approved by architecture review board\n- Core gateway scaffolding complete\n- Selected rate limiting library (token bucket)",
+              nextSteps: "- Build auth middleware integration\n- Set up staging environment\n- Document API migration guide for consumers",
+              risksAndMitigation: "- Rate limiter library selection delayed by one week. Mitigation: parallel evaluation of two candidates.",
+              impactToOtherPrograms: "- API consumers need advance notice of migration timeline",
+            },
           ],
           milestones: [
             { id: "m1", name: "Design review complete", status: "Complete", startDate: "2025-12-01", finishDate: "2025-12-20" },
@@ -179,6 +193,20 @@ const defaultProductAreas: ProductArea[] = [
               risksAndMitigation: "- Kafka cluster costs 30% over budget. Mitigation: reviewing partition strategy and retention policies to optimize.",
               impactToOtherPrograms: "- Analytics team needs updated schemas before Q2 reporting cycle",
             },
+            {
+              id: "es2", date: "2026-02-05",
+              recentProgress: "- Kafka cluster setup complete and load tested\n- First data source (user events) migrated successfully\n- Backfill tooling development started",
+              nextSteps: "- Migrate payment and order data sources\n- Build schema registry compatibility layer\n- Validate data quality parity with batch pipeline",
+              risksAndMitigation: "- Schema registry migration more complex than estimated. Mitigation: building a compatibility layer for legacy formats.",
+              impactToOtherPrograms: "- No cross-team blockers this sprint",
+            },
+            {
+              id: "es3", date: "2026-01-29",
+              recentProgress: "- Kafka cluster provisioned across 3 AZs\n- Completed POC with user events stream\n- Flink job templates ready for reuse",
+              nextSteps: "- Load test Kafka cluster at production scale\n- Begin first source migration (user events)\n- Set up monitoring dashboards",
+              risksAndMitigation: "- Cluster sizing may need adjustment after load testing. Mitigation: auto-scaling policies configured.",
+              impactToOtherPrograms: "- Coordinating with Analytics team on schema changes",
+            },
           ],
           milestones: [
             { id: "m1", name: "Kafka cluster setup", status: "Complete", startDate: "2025-11-15", finishDate: "2026-01-10" },
@@ -222,6 +250,20 @@ const defaultProductAreas: ProductArea[] = [
               nextSteps: "- Present findings to leadership for budget approval\n- Begin Phase 1 right-sizing in dev/staging\n- Implement automated cost alerting",
               risksAndMitigation: "- Teams may resist instance downsizing. Mitigation: providing performance benchmarks before and after changes.",
               impactToOtherPrograms: "- All teams will need to update instance types in their deployment configs",
+            },
+            {
+              id: "es2", date: "2026-02-03",
+              recentProgress: "- Audit 75% complete across 12 AWS accounts\n- Found $120K/month in oversized RDS instances\n- Automated tagging script deployed for cost attribution",
+              nextSteps: "- Complete remaining 4 account audits\n- Compile findings into executive presentation\n- Research reserved instance pricing models",
+              risksAndMitigation: "- Some accounts lack proper cost tagging. Mitigation: deploying automated tagging retroactively.",
+              impactToOtherPrograms: "- No immediate impacts, audit phase only",
+            },
+            {
+              id: "es3", date: "2026-01-27",
+              recentProgress: "- Project kickoff complete with all stakeholders\n- Cost allocation framework defined\n- Started auditing first 4 AWS accounts",
+              nextSteps: "- Continue auditing remaining accounts\n- Set up cost monitoring dashboards\n- Identify quick-win optimization targets",
+              risksAndMitigation: "- Limited visibility into shared service costs. Mitigation: working with finance to improve cost allocation tags.",
+              impactToOtherPrograms: "- Requesting cost tag adoption from all engineering teams",
             },
           ],
           milestones: [
@@ -288,6 +330,20 @@ const defaultProductAreas: ProductArea[] = [
               risksAndMitigation: "- Template quality concerns from enterprise customers. Mitigation: adding industry-specific templates in next sprint.",
               impactToOtherPrograms: "- Billing team needs to support new trial-to-paid conversion flow",
             },
+            {
+              id: "es2", date: "2026-02-06",
+              recentProgress: "- Template gallery MVP ready with 10 templates\n- Product tour A/B test launched (50/50 split)\n- Onboarding completion rate baseline measured at 23%",
+              nextSteps: "- Analyze A/B test results after 1 week\n- Add 5 more industry-specific templates\n- Design progress tracking dashboard wireframes",
+              risksAndMitigation: "- A/B test sample size may be too small for significance. Mitigation: extending test duration if needed.",
+              impactToOtherPrograms: "- No cross-team blockers this week",
+            },
+            {
+              id: "es3", date: "2026-01-30",
+              recentProgress: "- Product tour interactive prototype complete\n- User testing with 12 participants showed 4.2/5 satisfaction\n- Template gallery backend API built and deployed",
+              nextSteps: "- Begin A/B testing product tour\n- Build template gallery frontend UI\n- Define onboarding success metrics with analytics team",
+              risksAndMitigation: "- User testing revealed confusion with step 3 of the tour. Mitigation: redesigning the workspace creation step.",
+              impactToOtherPrograms: "- Analytics team integrating onboarding funnel events",
+            },
           ],
           milestones: [
             { id: "m1", name: "Product tour MVP", status: "Complete", startDate: "2025-12-01", finishDate: "2026-01-15" },
@@ -334,6 +390,20 @@ const defaultProductAreas: ProductArea[] = [
               nextSteps: "- Resolve currency conversion discrepancy blocking EU migration\n- Complete ACH/wire transfer support\n- Migrate remaining 6 enterprise accounts",
               risksAndMitigation: "- Currency conversion bug causing $0.01-$0.03 rounding errors on EU invoices. Blocking migration of 4 EU customers. Engineering investigating root cause.",
               impactToOtherPrograms: "- Sales team cannot close Q1 deals requiring custom contract terms until new billing launches",
+            },
+            {
+              id: "es2", date: "2026-02-07",
+              recentProgress: "- Stripe integration testing complete for US payments\n- First enterprise customer (Acme Corp) successfully migrated\n- Invoice template system deployed",
+              nextSteps: "- Begin EU customer migrations\n- Start ACH/wire transfer implementation\n- Migrate second enterprise customer (TechFlow Inc)",
+              risksAndMitigation: "- EU currency handling not yet tested. Mitigation: setting up dedicated test environment for multi-currency.",
+              impactToOtherPrograms: "- Finance team validating revenue recognition with new invoice format",
+            },
+            {
+              id: "es3", date: "2026-01-31",
+              recentProgress: "- Invoice engine core rebuild complete\n- Stripe sandbox integration passing all test cases\n- Migration runbook drafted for enterprise accounts",
+              nextSteps: "- Move Stripe to production environment\n- Begin first enterprise customer migration\n- Complete invoice template customization",
+              risksAndMitigation: "- PCI DSS compliance audit not yet scheduled. Mitigation: engaging security team to fast-track review.",
+              impactToOtherPrograms: "- Accounting team needs updated GL mapping for new invoice structure",
             },
           ],
           milestones: [
@@ -383,6 +453,20 @@ const defaultProductAreas: ProductArea[] = [
               nextSteps: "- Complete export functionality (PDF, CSV, API)\n- Build scheduled report delivery feature\n- Expand beta to 500 users",
               risksAndMitigation: "- Query performance degrades above 1M rows. Mitigation: implementing materialized views and query caching layer.",
               impactToOtherPrograms: "- Data Pipeline v2 must complete source migration before analytics can show real-time data for all metrics",
+            },
+            {
+              id: "es2", date: "2026-02-04",
+              recentProgress: "- Real-time widgets deployed to internal beta (50 users)\n- Report builder drag-and-drop UI 60% complete\n- Initial beta feedback: users love real-time refresh",
+              nextSteps: "- Expand beta to external customers\n- Complete report builder chart configuration\n- Begin export feature design",
+              risksAndMitigation: "- Beta users reporting slow load times on large datasets. Mitigation: adding query result caching.",
+              impactToOtherPrograms: "- Working with Data Pipeline team on real-time connector APIs",
+            },
+            {
+              id: "es3", date: "2026-01-28",
+              recentProgress: "- Real-time widget framework complete\n- Built 8 widget types (line, bar, pie, table, KPI, funnel, map, heatmap)\n- Report builder wireframes approved",
+              nextSteps: "- Deploy real-time widgets to internal beta\n- Begin report builder drag-and-drop implementation\n- Set up beta feedback collection system",
+              risksAndMitigation: "- Widget rendering performance on mobile needs optimization. Mitigation: implementing lazy loading.",
+              impactToOtherPrograms: "- No cross-team dependencies this sprint",
             },
           ],
           milestones: [
@@ -451,6 +535,20 @@ const defaultProductAreas: ProductArea[] = [
               risksAndMitigation: "- Android parity lagging iOS by 2 weeks. Mitigation: shifting one iOS dev to Android team.",
               impactToOtherPrograms: "- Push notification service needs API update for new deep linking scheme",
             },
+            {
+              id: "es2", date: "2026-02-06",
+              recentProgress: "- iOS beta build submitted to TestFlight\n- Design system components 80% complete\n- New bottom navigation implemented",
+              nextSteps: "- Collect TestFlight beta feedback\n- Complete remaining design system tokens\n- Begin Android implementation sprint",
+              risksAndMitigation: "- TestFlight review may take longer than expected. Mitigation: submitted early with buffer time.",
+              impactToOtherPrograms: "- Coordinating with backend team on new API endpoints for offline sync",
+            },
+            {
+              id: "es3", date: "2026-01-30",
+              recentProgress: "- Design system foundation (colors, typography, spacing) complete\n- iOS prototype with new navigation passing internal review\n- Architecture decision: chose offline-first with CRDTs",
+              nextSteps: "- Build remaining design system components (cards, lists, forms)\n- Prepare iOS build for TestFlight\n- Set up Android project with shared design tokens",
+              risksAndMitigation: "- CRDT library has limited documentation. Mitigation: allocating extra time for offline sync implementation.",
+              impactToOtherPrograms: "- Design system will be shared with Help Center project",
+            },
           ],
           milestones: [
             { id: "m1", name: "Design system complete", status: "Complete", startDate: "2025-10-15", finishDate: "2026-01-10" },
@@ -495,6 +593,20 @@ const defaultProductAreas: ProductArea[] = [
               risksAndMitigation: "- Content team bandwidth limited for 200+ article rewrites. Mitigation: exploring AI-assisted content generation.",
               impactToOtherPrograms: "- Need API access from Mobile Redesign for in-app help integration",
             },
+            {
+              id: "es2", date: "2026-02-03",
+              recentProgress: "- Evaluated 5 of 8 help center platforms\n- AI search POC built with vector embeddings\n- Content audit 60% complete (120 articles reviewed)",
+              nextSteps: "- Complete remaining platform evaluations\n- Test AI search accuracy with real support queries\n- Finish content audit and categorize refresh priorities",
+              risksAndMitigation: "- Vector search infrastructure costs higher than budgeted. Mitigation: evaluating self-hosted vs managed options.",
+              impactToOtherPrograms: "- No cross-team dependencies this sprint",
+            },
+            {
+              id: "es3", date: "2026-01-27",
+              recentProgress: "- Project kickoff and stakeholder alignment complete\n- Defined evaluation criteria for help center platforms\n- Started content audit with support team",
+              nextSteps: "- Begin competitive platform evaluations\n- Build AI search proof of concept\n- Map existing content taxonomy",
+              risksAndMitigation: "- Support team availability for content audit limited. Mitigation: scheduling dedicated audit sessions weekly.",
+              impactToOtherPrograms: "- Aligning with Customer Experience team on support ticket taxonomy",
+            },
           ],
           milestones: [
             { id: "m1", name: "Research & vendor selection", status: "In Progress", startDate: "2026-01-15", finishDate: "2026-03-01" },
@@ -536,6 +648,20 @@ const defaultProductAreas: ProductArea[] = [
               nextSteps: "- Finalize RFC and get architecture approval\n- Build notification preference center prototype\n- Define smart batching algorithm requirements",
               risksAndMitigation: "- Scope may expand if Slack integration requires enterprise Slack plan. Mitigation: scoping Slack as optional Phase 2.",
               impactToOtherPrograms: "- Mobile Redesign deep linking depends on new notification payload format",
+            },
+            {
+              id: "es2", date: "2026-02-05",
+              recentProgress: "- Completed 20 user interviews on notification preferences\n- Mapped current notification channels and volume metrics\n- Drafted initial RFC for unified notification bus",
+              nextSteps: "- Survey enterprise customers on notification needs\n- Finalize RFC with architecture diagrams\n- Research smart batching algorithms",
+              risksAndMitigation: "- User research revealing more channels needed than scoped. Mitigation: prioritizing email and push first, deferring SMS.",
+              impactToOtherPrograms: "- No immediate cross-team impacts",
+            },
+            {
+              id: "es3", date: "2026-01-29",
+              recentProgress: "- Project kickoff complete with CX team alignment\n- Began user research recruitment (target: 20 interviews)\n- Audited existing notification infrastructure",
+              nextSteps: "- Conduct user interviews on notification preferences\n- Map all current notification touchpoints\n- Begin technical RFC for unified architecture",
+              risksAndMitigation: "- User recruitment slower than expected. Mitigation: expanding to include churned users for broader perspective.",
+              impactToOtherPrograms: "- Identified overlap with Mobile Redesign notification requirements",
             },
           ],
           milestones: [
