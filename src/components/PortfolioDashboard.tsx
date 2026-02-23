@@ -9,7 +9,6 @@ import {
   KpiCards,
   ProgramsTable,
   TimelineBar,
-  AiReportButton,
   matchesDeliveryFilter,
   DeliveryFilter,
 } from "./DashboardShared";
@@ -72,7 +71,6 @@ export default function PortfolioDashboard() {
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">All programs across {productAreas.length} product areas</p>
           </div>
           <div className="flex items-center gap-3">
-            <AiReportButton allPrograms={filteredByProductArea} />
             <ShareLinkButton title="Portfolio Overview" />
           </div>
         </div>

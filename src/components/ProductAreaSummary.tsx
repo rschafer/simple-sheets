@@ -9,7 +9,6 @@ import {
   KpiCards,
   ProgramsTable,
   TimelineBar,
-  AiReportButton,
   matchesDeliveryFilter,
   DeliveryFilter,
 } from "./DashboardShared";
@@ -57,7 +56,6 @@ export default function ProductAreaSummary() {
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{allPrograms.length} programs</p>
           </div>
           <div className="flex items-center gap-2">
-            <AiReportButton allPrograms={allPrograms} />
             <ShareLinkButton title={productArea.name} />
           </div>
         </div>

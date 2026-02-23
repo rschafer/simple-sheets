@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { useNavigation } from "@/context/NavigationContext";
-import { DashboardData, DashboardProvider, useDashboard } from "@/context/DashboardContext";
-import { healthLabels, markdownToHtml } from "@/components/DashboardShared";
+import { DashboardData, DashboardProvider } from "@/context/DashboardContext";
 import ProjectName from "@/components/ProjectName";
 import KeyLinks from "@/components/KeyLinks";
 import PrimaryContacts from "@/components/PrimaryContacts";
-import ProgramStatus, { HealthBadge, PhaseSelector } from "@/components/ProgramStatus";
+import { HealthBadge, PhaseSelector } from "@/components/ProgramStatus";
 import DeliveryDate from "@/components/DeliveryDate";
 import ExecutiveSummary from "@/components/ExecutiveSummary";
 import Scope from "@/components/Scope";
@@ -16,96 +15,6 @@ import RaidLog from "@/components/RaidLog";
 import ProjectPlan from "@/components/ProjectPlan";
 import ShareDialog from "@/components/ShareDialog";
 import Notifications from "@/components/Notifications";
-
-// --- Program AI Report Button ---
-function ProgramAiReportButton() {
-  const { getCurrentProgram } = useNavigation();
-  const { data } = useDashboard();
-  const program = getCurrentProgram();
-  const [report, setReport] = useState<string | null>(null);
-  const [generating, setGenerating] = useState(false);
-  const [open, setOpen] = useState(false);
-
-  if (!program) return null;
-
-  const generateReport = async () => {
-    setGenerating(true);
-    setOpen(true);
-
-    try {
-      const response = await fetch("/api/generate-program-report", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          programName: program.name,
-          health: healthLabels[program.healthStatus],
-          phase: data.phase,
-          deliveryDate: data.deliveryDate || "",
-          projectPlan: data.projectPlan,
-          raidItems: data.raidItems,
-          milestones: data.milestones,
-          latestSummary: data.executiveSummaries[0]?.recentProgress || "",
-        }),
-      });
-
-      if (!response.ok) throw new Error("Failed to generate report");
-      const result = await response.json();
-      setReport(result.report);
-    } catch (error) {
-      console.error("Program report error:", error);
-      setReport("Failed to generate report. Please ensure the API is configured and try again.");
-    } finally {
-      setGenerating(false);
-    }
-  };
-
-  return (
-    <>
-      <button
-        onClick={generateReport}
-        disabled={generating}
-        className="flex items-center gap-2 rounded-xl bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-      >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-        </svg>
-        {generating ? "Generating..." : "AI Report"}
-      </button>
-
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} />
-          <div className="relative bg-white rounded-2xl shadow-xl p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">AI Report — {program.name}</h3>
-              <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            {generating ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600" />
-                <span className="ml-3 text-gray-500">Analyzing program data...</span>
-              </div>
-            ) : report ? (
-              <>
-                <div
-                  className="prose prose-sm max-w-none text-gray-700 [&_strong]:text-gray-900 [&_strong]:font-semibold [&_ul]:mt-1 [&_ul]:mb-4 [&_li]:mb-1"
-                  dangerouslySetInnerHTML={{ __html: markdownToHtml(report) }}
-                />
-                <div className="mt-4 pt-3 border-t text-xs text-gray-400">
-                  Generated by Claude AI (Anthropic)
-                </div>
-              </>
-            ) : null}
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
 
 // This component wraps the dashboard with program-specific data from navigation
 function ProgramDashboardInner() {
@@ -124,7 +33,6 @@ function ProgramDashboardInner() {
                 </div>
               </div>
               <div className="flex-shrink-0 flex items-center gap-2">
-                <ProgramAiReportButton />
                 <ShareDialog />
               </div>
             </div>
