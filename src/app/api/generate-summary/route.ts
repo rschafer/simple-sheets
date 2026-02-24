@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 
-const anthropic = new Anthropic();
+const anthropic = new Anthropic({ timeout: 15000 });
 
 interface ProjectPlanItem {
   task: string;
@@ -36,7 +36,7 @@ interface GenerateRequest {
   endDate: string;
 }
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
   try {
@@ -108,7 +108,7 @@ Respond in JSON format. EVERY value MUST be bullet points, each starting with "-
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
         message = await anthropic.messages.create({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-haiku-4-5-20251001",
           max_tokens: 1024,
           messages: [
             { role: "user", content: prompt }
