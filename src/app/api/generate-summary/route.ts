@@ -36,6 +36,8 @@ interface GenerateRequest {
   endDate: string;
 }
 
+export const maxDuration = 30;
+
 export async function POST(request: NextRequest) {
   try {
     const body: GenerateRequest = await request.json();
@@ -102,16 +104,25 @@ Respond in JSON format. EVERY value MUST be bullet points, each starting with "-
   "impactToOtherPrograms": "- bullet 1\n- bullet 2"
 }`;
 
-    const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 1024,
-      messages: [
-        { role: "user", content: prompt }
-      ],
-    });
+    let message;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        message = await anthropic.messages.create({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1024,
+          messages: [
+            { role: "user", content: prompt }
+          ],
+        });
+        break;
+      } catch (err) {
+        if (attempt === 2) throw err;
+        await new Promise(r => setTimeout(r, 1000 * (attempt + 1)));
+      }
+    }
 
     // Extract the text content
-    const textContent = message.content.find(c => c.type === "text");
+    const textContent = message!.content.find(c => c.type === "text");
     if (!textContent || textContent.type !== "text") {
       throw new Error("No text response from AI");
     }
