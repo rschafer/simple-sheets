@@ -179,25 +179,32 @@ export default function ExecutiveSummary() {
       : "";
     const endDate = new Date().toISOString().split("T")[0];
 
+    const payload = {
+      projectName: data.projectName,
+      projectPlan: data.projectPlan,
+      raidItems: data.raidItems,
+      milestones: data.milestones,
+      startDate,
+      endDate,
+    };
+
     try {
-      const response = await fetch("/api/generate-summary", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          projectName: data.projectName,
-          projectPlan: data.projectPlan,
-          raidItems: data.raidItems,
-          milestones: data.milestones,
-          startDate,
-          endDate,
-        }),
-      });
+      let result;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const response = await fetch("/api/generate-summary", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
 
-      if (!response.ok) {
-        throw new Error("Failed to generate summary");
+        if (response.ok) {
+          result = await response.json();
+          break;
+        }
+
+        if (attempt === 2) throw new Error("Failed to generate summary");
+        await new Promise((r) => setTimeout(r, 2000 * (attempt + 1)));
       }
-
-      const result = await response.json();
 
       setDraft({
         recentProgress: result.summary.recentProgress,
