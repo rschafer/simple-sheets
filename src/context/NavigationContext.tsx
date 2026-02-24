@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useCallback, useEffect, Rea
 import { DashboardData, HealthStatus } from "./DashboardContext";
 
 const NAV_STORAGE_KEY = "navigation-data";
-const NAV_DATA_VERSION = "3"; // Bump to force reload with new mock data
+const NAV_DATA_VERSION = "4"; // Bump to force reload with new mock data
 
 export interface Program {
   id: string;
